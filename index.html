@@ -4,14 +4,62 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>9 That Define Me | Powered by PixAI</title>
-  <meta name="description" id="metaDesc" content="Pick 9 games or anime that define you, generate a beautiful grid card, and share with friends!">
-  <meta property="og:title" id="ogTitle" content="9 That Define Me — Your Grid">
-  <meta property="og:description" id="ogDesc" content="Pick 9 games or anime that define you, generate a beautiful grid card, and share!">
+  <meta name="description" id="metaDesc" content="Pick 9 games or anime that define you, generate a beautiful shareable 3x3 grid card. Choose from thousands of titles and share your taste with friends!">
+  <meta name="keywords" content="anime grid, game grid, 9 that define me, my 9, anime list, game list, shareable card, PixAI">
+  <meta name="author" content="PixAI">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" id="canonical" href="https://pixai-my9.pages.dev/">
+
+  <!-- Hreflang for multi-language SEO -->
+  <link rel="alternate" hreflang="en" href="https://pixai-my9.pages.dev/?lang=en">
+  <link rel="alternate" hreflang="ja" href="https://pixai-my9.pages.dev/?lang=ja">
+  <link rel="alternate" hreflang="ko" href="https://pixai-my9.pages.dev/?lang=ko">
+  <link rel="alternate" hreflang="zh-Hant-TW" href="https://pixai-my9.pages.dev/?lang=zh-TW">
+  <link rel="alternate" hreflang="x-default" href="https://pixai-my9.pages.dev/">
+
+  <!-- Open Graph -->
+  <meta property="og:title" id="ogTitle" content="9 That Define Me — Create Your Anime & Game Grid">
+  <meta property="og:description" id="ogDesc" content="Pick 9 games or anime that define you, generate a beautiful shareable grid card!">
   <meta property="og:type" content="website">
+  <meta property="og:url" content="https://pixai-my9.pages.dev/">
   <meta property="og:image" content="https://pixai.art/og-my9.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="PixAI My9">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="ja_JP">
+  <meta property="og:locale:alternate" content="ko_KR">
+  <meta property="og:locale:alternate" content="zh_TW">
+
+  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" id="twTitle" content="9 That Define Me — Your Grid">
-  <meta name="twitter:description" id="twDesc" content="Pick 9 games or anime that define you, generate a beautiful grid card!">
+  <meta name="twitter:title" id="twTitle" content="9 That Define Me — Create Your Anime & Game Grid">
+  <meta name="twitter:description" id="twDesc" content="Pick 9 games or anime that define you, generate a beautiful shareable grid card!">
+  <meta name="twitter:site" content="@PixAI_official">
+
+  <!-- PWA / App -->
+  <meta name="theme-color" content="#e85d75">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="My9">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "My9 — 9 That Define Me",
+    "description": "Pick 9 games or anime that define you, generate a beautiful shareable 3x3 grid card.",
+    "url": "https://pixai-my9.pages.dev/",
+    "applicationCategory": "Entertainment",
+    "operatingSystem": "Web",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "creator": { "@type": "Organization", "name": "PixAI", "url": "https://pixai.art" },
+    "inLanguage": ["en", "ja", "ko", "zh-TW"]
+  }
+  </script>
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
     :root{
@@ -636,6 +684,10 @@
 
     // ===== LANGUAGE DETECTION & STATE =====
     function detectLang() {
+      // 1. Check URL param ?lang=ja|ko|en|zh-TW
+      const urlLang = new URLSearchParams(location.search).get('lang');
+      if (urlLang && I18N[urlLang]) return urlLang;
+      // 2. Check browser languages
       const langs = navigator.languages || [navigator.language || 'en'];
       for (const l of langs) {
         if (l.startsWith('ja')) return 'ja';

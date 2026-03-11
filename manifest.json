@@ -1,0 +1,16 @@
+{
+  "name": "My9 — 9 That Define Me",
+  "short_name": "My9",
+  "description": "Pick 9 games or anime that define you, generate a shareable grid card.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#faf7f5",
+  "theme_color": "#e85d75",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
