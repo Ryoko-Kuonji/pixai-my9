@@ -297,8 +297,28 @@
     .btn-save:hover{background:var(--accent-dark)}
     .btn-copy{background:var(--surface);color:var(--text);border:1.5px solid var(--border)}
     .btn-copy:hover{border-color:var(--accent);color:var(--accent)}
+    .btn-share{background:var(--surface);color:var(--text);border:1.5px solid var(--border)}
+    .btn-share:hover{border-color:var(--accent);color:var(--accent)}
     .btn-reset{background:transparent;color:var(--text2);border:1.5px solid var(--border)}
     .btn-reset:hover{color:var(--text);border-color:var(--text3)}
+
+    .back-home-link{
+      display:inline-block;color:var(--accent);font-size:0.85rem;font-weight:500;
+      text-decoration:none;margin-bottom:8px;transition:opacity 0.2s;
+    }
+    .back-home-link:hover{opacity:0.7}
+
+    .make-mine-cta{width:100%;max-width:400px;margin-bottom:24px}
+    .btn-make-mine{
+      width:100%;padding:16px 24px;border:none;border-radius:12px;
+      background:linear-gradient(135deg, var(--accent), #d94a8a);
+      color:#fff;font-size:1.1rem;font-weight:700;cursor:pointer;
+      font-family:inherit;transition:transform 0.2s,box-shadow 0.2s;
+      box-shadow:0 4px 16px rgba(232,93,117,0.35);
+      animation:pulse-btn 2s ease-in-out infinite;
+    }
+    .btn-make-mine:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(232,93,117,0.45)}
+    @keyframes pulse-btn{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
 
     .pixai-cta{
       width:100%;max-width:400px;
@@ -419,6 +439,7 @@
 
   <!-- ===== RESULT PAGE ===== -->
   <div id="page-result" class="page">
+    <a href="javascript:void(0)" onclick="goHome()" class="back-home-link fade-in" id="backHomeLink"></a>
     <div class="result-header fade-in">
       <h2 id="resultTitle"></h2>
       <p id="resultSubtitle"></p>
@@ -428,8 +449,12 @@
     </div>
     <div class="action-buttons fade-in fade-in-1">
       <button class="btn-action btn-save" onclick="saveCard()" id="btnSave"></button>
+      <button class="btn-action btn-share" onclick="shareLink()" id="btnShareLink"></button>
       <button class="btn-action btn-copy" onclick="copyShareText()" id="btnCopy"></button>
       <button class="btn-action btn-reset" onclick="resetAll()" id="btnReset"></button>
+    </div>
+    <div class="make-mine-cta fade-in fade-in-1" id="makeMine" style="display:none">
+      <button class="btn-make-mine" onclick="goHome()" id="btnMakeMine"></button>
     </div>
     <div class="pixai-cta fade-in fade-in-2">
       <h3 id="ctaTitle"></h3>
@@ -486,8 +511,14 @@
         loading: '九宮格を生成中...',
         confirm_switch: '切り替えると選択済みの {n} 作品がクリアされます。よろしいですか？',
         qr_text: 'スキャンして九宮格を作成',
-        share_prefix: '私を構成する9つの{kind}：',
-        share_suffix: '\n\nあなたの九宮格を作ろう！→ pixai.art\n#私を構成する9つの作品 #PixAI',
+        btn_share_link: '🔗 リンクをシェア',
+        toast_link_copied: 'リンクをコピーしました！',
+        btn_make_mine: '🎮 自分のも作る！',
+        shared_viewing: '{creator} さんの九宮格',
+        shared_viewing_anon: 'みんなの九宮格',
+        back_home: '← ホームに戻る',
+        share_prefix: '私を構成する9つの{kind}：\n',
+        share_suffix: '\n\nあなたも作ろう！→ {url}\n#私を構成する9つの作品 #PixAI',
         card_title: '私を構成する9つの{kind}',
         og_title: '私を構成する9つの作品 — あなたの九宮格',
         og_desc: 'あなたを構成する9つのゲームやアニメを選んで、九宮格カードを作成して共有しよう！',
@@ -531,8 +562,14 @@
         loading: '격자 생성 중...',
         confirm_switch: '전환하면 선택한 {n}개 작품이 초기화됩니다. 계속하시겠습니까?',
         qr_text: 'QR 스캔하여 격자 만들기',
-        share_prefix: '나를 구성하는 9개의 {kind}：',
-        share_suffix: '\n\n나만의 격자를 만들어 보세요! → pixai.art\n#나를구성하는9개의작품 #PixAI',
+        btn_share_link: '🔗 링크 공유',
+        toast_link_copied: '링크 복사됨!',
+        btn_make_mine: '🎮 나도 만들기!',
+        shared_viewing: '{creator}님의 격자',
+        shared_viewing_anon: '친구의 격자',
+        back_home: '← 홈으로',
+        share_prefix: '나를 구성하는 9개의 {kind}：\n',
+        share_suffix: '\n\n나도 만들어 보세요! → {url}\n#나를구성하는9개의작품 #PixAI',
         card_title: '나를 구성하는 9개의 {kind}',
         og_title: '나를 구성하는 9개의 작품 — 나만의 격자',
         og_desc: '당신을 구성하는 9개의 게임이나 애니메이션을 선택하고, 격자 카드를 만들어 공유하세요!',
@@ -576,8 +613,14 @@
         loading: 'Generating grid...',
         confirm_switch: 'Switching will clear your {n} selected works. Continue?',
         qr_text: 'Scan to create your grid',
+        btn_share_link: '🔗 Share Link',
+        toast_link_copied: 'Link copied!',
+        btn_make_mine: '🎮 Make My Own!',
+        shared_viewing: "{creator}'s Grid",
+        shared_viewing_anon: "Someone's Grid",
+        back_home: '← Home',
         share_prefix: '9 {kind} That Define Me:\n',
-        share_suffix: '\n\nCreate your own grid! → pixai.art\n#9ThatDefineMe #PixAI',
+        share_suffix: '\n\nCreate yours! → {url}\n#9ThatDefineMe #PixAI',
         card_title: '9 {kind} That Define Me',
         og_title: '9 That Define Me — Your Grid',
         og_desc: 'Pick 9 games or anime that define you, generate a beautiful grid card, and share with friends!',
@@ -621,8 +664,14 @@
         loading: '正在生成九宮格...',
         confirm_switch: '切換將清空已選的 {n} 部作品，確定嗎？',
         qr_text: '掃碼製作你的專屬九宮格',
+        btn_share_link: '🔗 分享連結',
+        toast_link_copied: '連結已複製！',
+        btn_make_mine: '🎮 我也來做一個！',
+        shared_viewing: '{creator} 的九宮格',
+        shared_viewing_anon: '好友的九宮格',
+        back_home: '← 返回首頁',
         share_prefix: '構成我的九部{kind}：\n',
-        share_suffix: '\n\n來製作你的專屬九宮格吧！→ pixai.art\n#構成我的九部作品 #PixAI',
+        share_suffix: '\n\n你也來做一個吧！→ {url}\n#構成我的九部作品 #PixAI',
         card_title: '構成我的九部{kind}',
         og_title: '構成我的九部作品 — 你的專屬九宮格',
         og_desc: '選擇9部最能代表你的遊戲或動畫，生成精美九宮格卡片，和朋友一起分享！',
@@ -644,7 +693,9 @@
       }
       return 'en';
     }
-    let currentLang = localStorage.getItem('my9_lang') || detectLang();
+    // URL param overrides localStorage (important for share links)
+    const urlLangParam = new URLSearchParams(location.search).get('lang');
+    let currentLang = (urlLangParam && I18N[urlLangParam]) ? urlLangParam : (localStorage.getItem('my9_lang') || detectLang());
     if (!I18N[currentLang]) currentLang = 'en';
 
     function t(key, params) {
@@ -709,11 +760,14 @@
       document.getElementById('modalCloseBtn').textContent = t('close');
 
       // Result page
-      document.getElementById('resultTitle').textContent = t('result_title');
+      if (!isSharedView) document.getElementById('resultTitle').textContent = t('result_title');
       document.getElementById('resultSubtitle').textContent = t('result_subtitle');
       document.getElementById('btnSave').textContent = t('btn_save');
+      document.getElementById('btnShareLink').textContent = t('btn_share_link');
       document.getElementById('btnCopy').textContent = t('btn_copy');
       document.getElementById('btnReset').textContent = t('btn_reset');
+      document.getElementById('backHomeLink').textContent = t('back_home');
+      document.getElementById('btnMakeMine').textContent = t('btn_make_mine');
 
       // CTA
       const ctaTitleEl = document.getElementById('ctaTitle');
@@ -1106,7 +1160,8 @@
 
     function copyShareText(){
       const titles=slots.filter(Boolean).map((s,i)=>`${i+1}. ${s.title}`);
-      const text = t('share_prefix', { kind: kindT() }) + titles.join('\n') + t('share_suffix');
+      const url = buildShareUrl();
+      const text = t('share_prefix', { kind: kindT() }) + titles.join('\n') + t('share_suffix', { url });
       navigator.clipboard.writeText(text).then(()=>showToast(t('toast_copied'))).catch(()=>{
         const ta=document.createElement('textarea');ta.value=text;
         document.body.appendChild(ta);ta.select();document.execCommand('copy');
@@ -1155,8 +1210,90 @@
       document.getElementById('socialProof').textContent = t('social_proof', { n: getGenCount().toLocaleString() });
     }
 
+    // ===== SHARE LINK =====
+    let isSharedView = false;
+
+    function buildShareUrl() {
+      const ids = slots.filter(Boolean).map(s => s.id).join(',');
+      const creator = document.getElementById('creatorName').value.trim();
+      const base = location.origin + location.pathname;
+      const params = new URLSearchParams();
+      params.set('ids', ids);
+      params.set('kind', currentKind);
+      if (creator) params.set('creator', creator);
+      params.set('lang', currentLang);
+      return base + '?' + params.toString();
+    }
+
+    function shareLink() {
+      const url = buildShareUrl();
+      navigator.clipboard.writeText(url).then(() => showToast(t('toast_link_copied'))).catch(() => {
+        const ta = document.createElement('textarea'); ta.value = url;
+        document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+        document.body.removeChild(ta); showToast(t('toast_link_copied'));
+      });
+    }
+
+    function goHome() {
+      history.replaceState(null, '', location.pathname);
+      isSharedView = false;
+      document.getElementById('makeMine').style.display = 'none';
+      document.getElementById('btnReset').style.display = '';
+      resetAll();
+    }
+
+    async function loadSharedResult() {
+      const params = new URLSearchParams(location.search);
+      const idsStr = params.get('ids');
+      if (!idsStr) return;
+
+      const ids = idsStr.split(',').map(Number).filter(n => n > 0);
+      if (ids.length !== 9) return;
+
+      isSharedView = true;
+      currentKind = params.get('kind') || 'game';
+      const creator = params.get('creator') || '';
+      if (creator) document.getElementById('creatorName').value = creator;
+
+      document.querySelectorAll('.kind-tab').forEach(tab =>
+        tab.classList.toggle('active', tab.dataset.kind === currentKind)
+      );
+
+      document.getElementById('loadingOverlay').classList.add('show');
+
+      const results = await Promise.all(ids.map(id =>
+        fetch(`https://api.bgm.tv/subject/${id}?responseGroup=small`)
+          .then(r => r.ok ? r.json() : null).catch(() => null)
+      ));
+
+      results.forEach((item, i) => {
+        if (!item || !item.images) return;
+        slots[i] = {
+          id: item.id,
+          title: item.name || item.name_cn,
+          cover: (item.images.common || '').replace('http://', 'https://'),
+          coverLarge: (item.images.large || item.images.common || '').replace('http://', 'https://')
+        };
+      });
+
+      if (slots.filter(Boolean).length === 9) {
+        bumpGenCount();
+        showPage('result');
+        loadImagesAndDraw();
+        document.getElementById('makeMine').style.display = '';
+        document.getElementById('btnReset').style.display = 'none';
+        const title = creator
+          ? t('shared_viewing', { creator })
+          : t('shared_viewing_anon');
+        document.getElementById('resultTitle').textContent = title;
+      } else {
+        document.getElementById('loadingOverlay').classList.remove('show');
+      }
+    }
+
     // ===== INIT =====
     applyLang();
+    loadSharedResult();
   </script>
 </body>
 </html>
