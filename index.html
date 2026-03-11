@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>9 That Define Me | Powered by PixAI</title>
+  <meta name="description" id="metaDesc" content="Pick 9 games or anime that define you, generate a beautiful grid card, and share with friends!">
+  <meta property="og:title" id="ogTitle" content="9 That Define Me — Your Grid">
+  <meta property="og:description" id="ogDesc" content="Pick 9 games or anime that define you, generate a beautiful grid card, and share!">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://pixai.art/og-my9.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" id="twTitle" content="9 That Define Me — Your Grid">
+  <meta name="twitter:description" id="twDesc" content="Pick 9 games or anime that define you, generate a beautiful grid card!">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --bg:#faf7f5;--white:#fff;--surface:#f3efed;
+      --border:#e8e0dc;--border2:#d5ccc7;
+      --text:#2c2420;--text2:#7a6e66;--text3:#b0a49c;
+      --accent:#e85d75;--accent-light:#fce8ec;--accent-dark:#d14a62;
+      --radius:12px;--radius-lg:16px;
+      --shadow:0 1px 8px rgba(44,36,32,0.06);
+      --shadow-lg:0 4px 24px rgba(44,36,32,0.1);
+    }
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","PingFang TC","Noto Sans JP","Noto Sans KR","Microsoft JhengHei","Noto Sans TC",sans-serif;
+      background:var(--bg);color:var(--text);min-height:100vh;
+      -webkit-font-smoothing:antialiased;
+    }
+    .page{display:none;min-height:100vh}
+    .page.active{display:flex;flex-direction:column;align-items:center}
+
+    /* ===== TOP BAR ===== */
+    .top-bar{
+      display:flex;align-items:center;justify-content:center;gap:12px;
+      flex-wrap:wrap;margin-bottom:20px;width:100%;
+    }
+    .powered-by{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:6px 14px;border:1px solid var(--border);border-radius:20px;
+      background:var(--white);font-size:0.78rem;color:var(--text3);
+      box-shadow:var(--shadow);text-decoration:none;transition:all 0.2s;
+    }
+    .powered-by:hover{border-color:var(--accent);color:var(--text2)}
+    .powered-by b{color:var(--accent);font-weight:700}
+    .lang-switcher{
+      display:inline-flex;background:var(--surface);border-radius:8px;
+      padding:2px;gap:1px;
+    }
+    .lang-btn{
+      padding:4px 10px;border-radius:6px;border:none;
+      font-size:0.72rem;font-weight:500;cursor:pointer;
+      background:transparent;color:var(--text3);
+      transition:all 0.2s;font-family:inherit;white-space:nowrap;
+    }
+    .lang-btn.active{background:var(--white);color:var(--accent);box-shadow:0 1px 3px rgba(0,0,0,0.06)}
+    .lang-btn:not(.active):hover{color:var(--text2)}
+
+    /* ===== MAIN PAGE ===== */
+    #page-main{padding:32px 16px 100px;max-width:680px;margin:0 auto;width:100%}
+
+    .header{text-align:center;margin-bottom:28px}
+    .header h1{font-size:1.8rem;font-weight:800;margin-bottom:12px;letter-spacing:-0.02em}
+    .kind-tabs{
+      display:inline-flex;background:var(--surface);border-radius:10px;
+      padding:3px;gap:2px;margin-bottom:10px;
+    }
+    .kind-tab{
+      padding:7px 22px;border-radius:8px;border:none;
+      font-size:0.9rem;font-weight:600;cursor:pointer;
+      background:transparent;color:var(--text3);
+      transition:all 0.2s;font-family:inherit;
+    }
+    .kind-tab.active{background:var(--white);color:var(--accent);box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+    .kind-tab:not(.active):hover{color:var(--text2)}
+    .header .subtitle{color:var(--text2);font-size:0.9rem;margin-top:4px}
+
+    .creator-input{margin-bottom:20px}
+    .creator-input label{display:block;font-size:0.85rem;color:var(--text2);margin-bottom:6px;font-weight:500}
+    .creator-input input{
+      width:100%;padding:10px 14px;border:1.5px solid var(--border);
+      border-radius:10px;background:var(--white);font-size:0.9rem;
+      color:var(--text);outline:none;transition:border-color 0.2s;font-family:inherit;
+    }
+    .creator-input input:focus{border-color:var(--accent)}
+    .creator-input input::placeholder{color:var(--text3)}
+
+    /* Hot picks */
+    .hot-picks{margin-bottom:18px;width:100%;max-width:420px}
+    .hot-picks-label{font-size:0.8rem;color:var(--text3);margin-bottom:8px;font-weight:500}
+    .hot-picks-list{display:flex;flex-wrap:wrap;gap:6px}
+    .hot-pick{
+      padding:5px 12px;border:1px solid var(--border);border-radius:16px;
+      font-size:0.78rem;color:var(--text2);cursor:pointer;
+      background:var(--white);transition:all 0.2s;white-space:nowrap;
+    }
+    .hot-pick:hover{border-color:var(--accent);color:var(--accent)}
+    .hot-pick.added{border-color:var(--accent);background:var(--accent-light);color:var(--accent);opacity:0.6;pointer-events:none}
+
+    /* 3x3 Grid Slots */
+    .slots-grid{
+      display:grid;grid-template-columns:repeat(3,1fr);
+      gap:10px;margin-bottom:24px;width:100%;max-width:420px;
+      background:var(--white);border:1.5px solid var(--border);
+      border-radius:var(--radius-lg);padding:12px;
+      box-shadow:var(--shadow);
+    }
+    .slot{
+      aspect-ratio:3/4;border:2px dashed var(--border);
+      border-radius:var(--radius);display:flex;flex-direction:column;
+      align-items:center;justify-content:center;gap:4px;
+      cursor:pointer;transition:all 0.2s;position:relative;
+      overflow:hidden;background:var(--surface);
+    }
+    .slot:hover{border-color:var(--accent);background:var(--accent-light)}
+    .slot .slot-num{
+      position:absolute;top:6px;left:8px;font-size:0.7rem;
+      color:var(--text3);font-weight:600;
+    }
+    .slot .slot-add{font-size:1.4rem;color:var(--text3);line-height:1}
+    .slot .slot-text{font-size:0.75rem;color:var(--text3)}
+
+    .slot.filled{border:1px solid var(--border);background:var(--surface)}
+    .slot.filled .slot-cover{
+      position:absolute;inset:0;background-size:cover;
+      background-position:center;border-radius:calc(var(--radius) - 2px);
+    }
+    .slot.filled .slot-overlay{
+      position:absolute;inset:0;
+      background:linear-gradient(to top,rgba(0,0,0,0.65) 0%,transparent 50%);
+      border-radius:calc(var(--radius) - 2px);
+    }
+    .slot.filled .slot-title{
+      position:absolute;bottom:8px;left:8px;right:8px;
+      font-size:0.75rem;font-weight:600;color:#fff;
+      text-shadow:0 1px 3px rgba(0,0,0,0.4);
+      line-height:1.2;
+    }
+    .slot.filled .slot-remove{
+      position:absolute;top:4px;right:4px;width:22px;height:22px;
+      border-radius:50%;background:rgba(0,0,0,0.5);color:#fff;
+      display:flex;align-items:center;justify-content:center;
+      font-size:12px;opacity:0;transition:opacity 0.2s;cursor:pointer;
+    }
+    .slot.filled:hover .slot-remove{opacity:1}
+    @media(hover:none){.slot.filled .slot-remove{opacity:0.8}}
+
+    .btn-generate-main{
+      width:100%;padding:14px;background:var(--accent);
+      border:none;border-radius:var(--radius);color:#fff;
+      font-size:1rem;font-weight:700;cursor:pointer;
+      transition:all 0.2s;font-family:inherit;
+      box-shadow:0 4px 16px rgba(232,93,117,0.25);
+    }
+    .btn-generate-main:hover{background:var(--accent-dark);transform:translateY(-1px)}
+    .btn-generate-main:disabled{
+      background:var(--border);color:var(--text3);
+      box-shadow:none;cursor:not-allowed;transform:none;
+    }
+
+    /* ===== SEARCH MODAL ===== */
+    .modal-overlay{
+      display:none;position:fixed;inset:0;z-index:1000;
+      background:rgba(44,36,32,0.5);
+      justify-content:center;align-items:center;padding:16px;
+    }
+    .modal-overlay.open{display:flex}
+    .modal{
+      background:var(--white);border-radius:var(--radius-lg);
+      width:100%;max-width:560px;max-height:80vh;
+      display:flex;flex-direction:column;box-shadow:var(--shadow-lg);
+      overflow:hidden;
+    }
+    .modal-header{
+      padding:20px 20px 0;display:flex;align-items:center;
+      justify-content:space-between;
+    }
+    .modal-header h3{font-size:1.1rem;font-weight:700}
+    .modal-close{
+      background:none;border:none;font-size:1.3rem;
+      color:var(--text2);cursor:pointer;padding:4px 8px;
+      border-radius:6px;transition:background 0.2s;
+    }
+    .modal-close:hover{background:var(--surface)}
+    .modal-search{
+      padding:14px 20px;display:flex;gap:8px;
+    }
+    .modal-search input{
+      flex:1;padding:10px 14px;border:1.5px solid var(--border);
+      border-radius:10px;font-size:0.9rem;outline:none;
+      color:var(--text);font-family:inherit;background:var(--surface);
+    }
+    .modal-search input:focus{border-color:var(--accent);background:var(--white)}
+    .modal-search input::placeholder{color:var(--text3)}
+    .modal-search button{
+      padding:10px 20px;background:var(--text);border:none;
+      border-radius:10px;color:#fff;font-size:0.9rem;font-weight:600;
+      cursor:pointer;white-space:nowrap;font-family:inherit;
+      transition:background 0.2s;
+    }
+    .modal-search button:hover{background:#1a1410}
+
+    .modal-results{
+      flex:1;overflow-y:auto;padding:0 20px 20px;
+    }
+    .modal-results-grid{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
+    }
+    .result-card{
+      cursor:pointer;border:2px solid transparent;
+      border-radius:var(--radius);overflow:hidden;
+      transition:all 0.2s;
+    }
+    .result-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+    .result-card img{
+      width:100%;aspect-ratio:3/4;object-fit:cover;
+      display:block;background:var(--surface);
+    }
+    .result-card .result-name{
+      padding:6px 8px;font-size:0.75rem;font-weight:500;
+      color:var(--text);line-height:1.3;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    .modal-empty{
+      text-align:center;padding:40px 20px;color:var(--text3);font-size:0.9rem;
+    }
+    .modal-loading{text-align:center;padding:40px 20px;color:var(--text3)}
+    .modal-footer{
+      padding:12px 20px;border-top:1px solid var(--border);
+      text-align:right;
+    }
+    .modal-footer button{
+      padding:8px 20px;border:1px solid var(--border);border-radius:8px;
+      background:var(--white);color:var(--text2);font-size:0.85rem;
+      cursor:pointer;font-family:inherit;
+    }
+
+    /* ===== RESULT PAGE ===== */
+    #page-result{padding:24px 16px 48px;background:var(--white)}
+    .result-header{text-align:center;margin-bottom:20px}
+    .result-header h2{font-size:1.3rem;font-weight:800;margin-bottom:4px}
+    .result-header p{color:var(--text2);font-size:0.85rem}
+
+    .card-preview-wrapper{
+      width:100%;max-width:400px;border-radius:var(--radius-lg);
+      overflow:hidden;box-shadow:var(--shadow-lg);margin-bottom:24px;
+    }
+    .card-preview-wrapper canvas{width:100%;height:auto;display:block}
+
+    .action-buttons{
+      display:flex;gap:10px;flex-wrap:wrap;justify-content:center;
+      margin-bottom:32px;width:100%;max-width:400px;
+    }
+    .btn-action{
+      flex:1;min-width:100px;padding:12px 14px;border-radius:10px;
+      font-size:0.85rem;font-weight:600;cursor:pointer;
+      transition:all 0.2s;text-align:center;border:none;font-family:inherit;
+    }
+    .btn-save{background:var(--accent);color:#fff;box-shadow:0 4px 12px rgba(232,93,117,0.25)}
+    .btn-save:hover{background:var(--accent-dark)}
+    .btn-copy{background:var(--surface);color:var(--text);border:1.5px solid var(--border)}
+    .btn-copy:hover{border-color:var(--accent);color:var(--accent)}
+    .btn-reset{background:transparent;color:var(--text2);border:1.5px solid var(--border)}
+    .btn-reset:hover{color:var(--text);border-color:var(--text3)}
+
+    .pixai-cta{
+      width:100%;max-width:400px;
+      background:var(--accent-light);border:1.5px solid rgba(232,93,117,0.15);
+      border-radius:var(--radius-lg);padding:24px;text-align:center;
+    }
+    .pixai-cta h3{font-size:1.05rem;font-weight:700;margin-bottom:6px;line-height:1.5}
+    .pixai-cta h3 .brand{color:var(--accent);font-weight:800}
+    .pixai-cta p{color:var(--text2);font-size:0.82rem;margin-bottom:16px;line-height:1.6}
+    .pixai-cta .prompt-tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:14px}
+    .prompt-tag{
+      padding:5px 12px;background:var(--white);border:1px solid var(--border);
+      border-radius:16px;font-size:0.78rem;color:var(--accent);
+      font-weight:500;
+    }
+    .btn-pixai{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:12px 28px;background:var(--accent);border:none;
+      border-radius:20px;color:#fff;font-size:0.9rem;font-weight:700;
+      cursor:pointer;transition:all 0.2s;text-decoration:none;
+      box-shadow:0 4px 16px rgba(232,93,117,0.25);
+    }
+    .btn-pixai:hover{background:var(--accent-dark);transform:translateY(-1px)}
+
+    /* Social proof */
+    .social-proof{
+      text-align:center;font-size:0.78rem;color:var(--text3);
+      margin-top:12px;
+    }
+
+    /* Loading overlay */
+    .loading-overlay{
+      position:fixed;inset:0;z-index:2000;background:rgba(250,247,245,0.85);
+      display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+    }
+    .loading-overlay.show{display:flex}
+    .loading-spinner{
+      width:40px;height:40px;border:3px solid var(--border);
+      border-top-color:var(--accent);border-radius:50%;
+      animation:spin 0.7s linear infinite;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .loading-overlay p{color:var(--text2);font-size:0.9rem}
+
+    /* Toast */
+    .toast{
+      position:fixed;bottom:80px;left:50%;
+      transform:translateX(-50%) translateY(20px);
+      padding:12px 24px;background:var(--text);color:#fff;
+      border-radius:10px;font-size:0.85rem;font-weight:600;
+      opacity:0;transition:all 0.3s;z-index:9999;pointer-events:none;
+    }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+    /* Animations */
+    @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    .fade-in{animation:fadeIn 0.4s ease both}
+    .fade-in-1{animation-delay:0.1s}
+    .fade-in-2{animation-delay:0.2s}
+
+    /* Responsive */
+    @media(max-width:480px){
+      .modal-results-grid{grid-template-columns:repeat(3,1fr)}
+      .slots-grid{gap:8px;padding:8px}
+      .header h1{font-size:1.5rem}
+      .top-bar{gap:8px}
+      .lang-btn{padding:4px 8px;font-size:0.68rem}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== MAIN PAGE ===== -->
+  <div id="page-main" class="page active">
+    <div class="top-bar fade-in">
+      <a href="https://pixai.art?utm_source=my9" target="_blank" class="powered-by">Powered by <b>PixAI</b></a>
+      <div class="lang-switcher" id="langSwitcher"></div>
+    </div>
+    <div class="header fade-in">
+      <h1 id="mainTitle"></h1>
+      <div class="kind-tabs" id="kindTabs">
+        <button class="kind-tab active" data-kind="game" onclick="setKind('game')"><span id="tabGame"></span></button>
+        <button class="kind-tab" data-kind="anime" onclick="setKind('anime')"><span id="tabAnime"></span></button>
+      </div>
+      <div class="subtitle" id="mainSubtitle"></div>
+    </div>
+
+    <div class="creator-input fade-in fade-in-1">
+      <label id="creatorLabel"></label>
+      <input type="text" id="creatorName" maxlength="40">
+    </div>
+
+    <div class="hot-picks fade-in fade-in-1" id="hotPicks">
+      <div class="hot-picks-label" id="hotPicksLabel"></div>
+      <div class="hot-picks-list" id="hotPicksList"></div>
+    </div>
+
+    <div class="slots-grid fade-in fade-in-1" id="slotsGrid"></div>
+
+    <button class="btn-generate-main fade-in fade-in-2" id="btnGenMain" disabled onclick="generateCard()"></button>
+    <div class="social-proof fade-in fade-in-2" id="socialProof"></div>
+  </div>
+
+  <!-- ===== SEARCH MODAL ===== -->
+  <div class="modal-overlay" id="searchModal" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle"></h3>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-search">
+        <input type="text" id="modalSearchInput"
+               onkeydown="if(event.key==='Enter')doSearch()">
+        <button onclick="doSearch()" id="modalSearchBtn"></button>
+      </div>
+      <div class="modal-results" id="modalResults"></div>
+      <div class="modal-footer">
+        <button onclick="closeModal()" id="modalCloseBtn"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== RESULT PAGE ===== -->
+  <div id="page-result" class="page">
+    <div class="result-header fade-in">
+      <h2 id="resultTitle"></h2>
+      <p id="resultSubtitle"></p>
+    </div>
+    <div class="card-preview-wrapper fade-in fade-in-1">
+      <canvas id="cardCanvas"></canvas>
+    </div>
+    <div class="action-buttons fade-in fade-in-1">
+      <button class="btn-action btn-save" onclick="saveCard()" id="btnSave"></button>
+      <button class="btn-action btn-copy" onclick="copyShareText()" id="btnCopy"></button>
+      <button class="btn-action btn-reset" onclick="resetAll()" id="btnReset"></button>
+    </div>
+    <div class="pixai-cta fade-in fade-in-2">
+      <h3 id="ctaTitle"></h3>
+      <p id="ctaDesc"></p>
+      <div class="prompt-tags" id="promptTags"></div>
+      <a href="https://pixai.art?utm_source=my9&utm_medium=share" target="_blank" class="btn-pixai" id="ctaBtn"></a>
+    </div>
+  </div>
+
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+    <p id="loadingText"></p>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ===== I18N =====
+    const I18N = {
+      ja: {
+        title: '私を構成する9つの{kind}',
+        kind_game: 'ゲーム', kind_anime: 'アニメ',
+        tab_game: '🎮 ゲーム', tab_anime: '📺 アニメ',
+        subtitle: '世界に伝えよう、あなたの愛する{kind}を。',
+        creator_label: 'クリエイター（任意）',
+        creator_placeholder: 'ニックネームを入力',
+        hot_picks_label: '🔥 人気おすすめ（タップで追加）',
+        select: '選択',
+        btn_need_more: 'あと {n} 作品選んでください',
+        btn_generate: '九宮格を生成 ✨',
+        social_proof: '{n} 人が作成しました',
+        search_title: '{kind}を検索',
+        search_placeholder: '作品名を入力',
+        search_btn: '🔍 検索',
+        search_empty: '作品名を入力して検索',
+        search_loading: '検索中...',
+        search_fail: '検索に失敗しました',
+        search_no_result: '該当する作品がありません',
+        close: '閉じる',
+        result_title: 'あなたの九宮格',
+        result_subtitle: '画像を保存して友達にシェアしよう！',
+        btn_save: '💾 画像を保存',
+        btn_copy: '📋 テキストをコピー',
+        btn_reset: '↩ やり直す',
+        cta_title: 'AIでお気に入りのキャラを描こう！',
+        cta_title2: '{brand}を試してみて',
+        cta_desc: 'PixAIならアニメキャラやゲームシーンをワンクリックで生成、完全無料',
+        cta_btn: 'PixAIで創作する →',
+        style_suffix: 'スタイル',
+        toast_saved: '画像を保存しました！',
+        toast_copied: 'テキストをコピーしました！',
+        toast_dup: 'この作品は既に選択済みです',
+        toast_full: '9作品選択済み',
+        toast_not_found: '作品が見つかりません、手動で検索してください',
+        toast_network_error: 'ネットワークエラー、手動で検索してください',
+        loading: '九宮格を生成中...',
+        confirm_switch: '切り替えると選択済みの {n} 作品がクリアされます。よろしいですか？',
+        qr_text: 'スキャンして九宮格を作成',
+        share_prefix: '私を構成する9つの{kind}：',
+        share_suffix: '\n\nあなたの九宮格を作ろう！→ pixai.art\n#私を構成する9つの作品 #PixAI',
+        card_title: '私を構成する9つの{kind}',
+        og_title: '私を構成する9つの作品 — あなたの九宮格',
+        og_desc: 'あなたを構成する9つのゲームやアニメを選んで、九宮格カードを作成して共有しよう！',
+        page_title: '私を構成する9つの作品 | Powered by PixAI',
+      },
+      ko: {
+        title: '나를 구성하는 9개의 {kind}',
+        kind_game: '게임', kind_anime: '애니메이션',
+        tab_game: '🎮 게임', tab_anime: '📺 애니',
+        subtitle: '세상에 전하세요, 당신이 사랑하는 {kind}을.',
+        creator_label: '제작자 (선택)',
+        creator_placeholder: '닉네임 입력',
+        hot_picks_label: '🔥 인기 추천 (탭하여 추가)',
+        select: '선택',
+        btn_need_more: '{n}개 더 선택하세요',
+        btn_generate: '나만의 격자 만들기 ✨',
+        social_proof: '{n}명이 만들었습니다',
+        search_title: '{kind} 검색',
+        search_placeholder: '작품명 입력',
+        search_btn: '🔍 검색',
+        search_empty: '작품명을 입력하여 검색',
+        search_loading: '검색 중...',
+        search_fail: '검색 실패, 나중에 다시 시도하세요',
+        search_no_result: '관련 작품을 찾을 수 없습니다',
+        close: '닫기',
+        result_title: '나만의 격자',
+        result_subtitle: '이미지를 저장하고 친구에게 공유하세요!',
+        btn_save: '💾 이미지 저장',
+        btn_copy: '📋 텍스트 복사',
+        btn_reset: '↩ 다시 선택',
+        cta_title: 'AI로 좋아하는 캐릭터를 그려보세요!',
+        cta_title2: '{brand}를 사용해 보세요',
+        cta_desc: 'PixAI로 애니메 캐릭터와 게임 장면을 원클릭 생성, 완전 무료',
+        cta_btn: 'PixAI에서 만들기 →',
+        style_suffix: '스타일',
+        toast_saved: '이미지 저장됨!',
+        toast_copied: '텍스트 복사됨!',
+        toast_dup: '이미 선택된 작품입니다',
+        toast_full: '9개 모두 선택됨',
+        toast_not_found: '작품을 찾을 수 없습니다, 직접 검색하세요',
+        toast_network_error: '네트워크 오류, 직접 검색하세요',
+        loading: '격자 생성 중...',
+        confirm_switch: '전환하면 선택한 {n}개 작품이 초기화됩니다. 계속하시겠습니까?',
+        qr_text: 'QR 스캔하여 격자 만들기',
+        share_prefix: '나를 구성하는 9개의 {kind}：',
+        share_suffix: '\n\n나만의 격자를 만들어 보세요! → pixai.art\n#나를구성하는9개의작품 #PixAI',
+        card_title: '나를 구성하는 9개의 {kind}',
+        og_title: '나를 구성하는 9개의 작품 — 나만의 격자',
+        og_desc: '당신을 구성하는 9개의 게임이나 애니메이션을 선택하고, 격자 카드를 만들어 공유하세요!',
+        page_title: '나를 구성하는 9개의 작품 | Powered by PixAI',
+      },
+      en: {
+        title: '9 {kind} That Define Me',
+        kind_game: 'Games', kind_anime: 'Anime',
+        tab_game: '🎮 Games', tab_anime: '📺 Anime',
+        subtitle: 'Share your favorite {kind} with the world.',
+        creator_label: 'Creator (optional)',
+        creator_placeholder: 'Enter your nickname',
+        hot_picks_label: '🔥 Popular Picks (tap to add)',
+        select: 'Select',
+        btn_need_more: 'Select {n} more',
+        btn_generate: 'Generate Grid ✨',
+        social_proof: '{n} grids created',
+        search_title: 'Search {kind}',
+        search_placeholder: 'Enter title',
+        search_btn: '🔍 Search',
+        search_empty: 'Enter a title to search',
+        search_loading: 'Searching...',
+        search_fail: 'Search failed, please try again',
+        search_no_result: 'No results found',
+        close: 'Close',
+        result_title: 'Your Grid',
+        result_subtitle: 'Save and share with friends!',
+        btn_save: '💾 Save Image',
+        btn_copy: '📋 Copy Text',
+        btn_reset: '↩ Start Over',
+        cta_title: 'Draw your favorite characters with AI!',
+        cta_title2: 'Try {brand}',
+        cta_desc: 'Generate anime characters and game scenes in one click, completely free',
+        cta_btn: 'Create on PixAI →',
+        style_suffix: 'style',
+        toast_saved: 'Image saved!',
+        toast_copied: 'Text copied!',
+        toast_dup: 'Already selected',
+        toast_full: 'All 9 selected',
+        toast_not_found: 'Not found, try manual search',
+        toast_network_error: 'Network error, try manual search',
+        loading: 'Generating grid...',
+        confirm_switch: 'Switching will clear your {n} selected works. Continue?',
+        qr_text: 'Scan to create your grid',
+        share_prefix: '9 {kind} That Define Me:\n',
+        share_suffix: '\n\nCreate your own grid! → pixai.art\n#9ThatDefineMe #PixAI',
+        card_title: '9 {kind} That Define Me',
+        og_title: '9 That Define Me — Your Grid',
+        og_desc: 'Pick 9 games or anime that define you, generate a beautiful grid card, and share with friends!',
+        page_title: '9 That Define Me | Powered by PixAI',
+      },
+      'zh-TW': {
+        title: '構成我的九部{kind}',
+        kind_game: '遊戲', kind_anime: '動畫',
+        tab_game: '🎮 遊戲', tab_anime: '📺 動畫',
+        subtitle: '向世界傳達你所愛的{kind}。',
+        creator_label: '創作者（推薦填寫）',
+        creator_placeholder: '輸入你的暱稱',
+        hot_picks_label: '🔥 熱門推薦（點擊快速添加）',
+        select: '選擇',
+        btn_need_more: '還需選擇 {n} 部作品',
+        btn_generate: '生成九宮格 ✨',
+        social_proof: '已有 {n} 人生成了九宮格',
+        search_title: '搜尋{kind}',
+        search_placeholder: '輸入作品名稱',
+        search_btn: '🔍 搜尋',
+        search_empty: '輸入作品名稱開始搜尋',
+        search_loading: '搜尋中...',
+        search_fail: '搜尋失敗，請稍後重試',
+        search_no_result: '沒有找到相關作品',
+        close: '關閉',
+        result_title: '你的專屬九宮格',
+        result_subtitle: '長按保存圖片，分享給朋友吧！',
+        btn_save: '💾 保存圖片',
+        btn_copy: '📋 複製文案',
+        btn_reset: '↩ 重新選擇',
+        cta_title: '想用 AI 畫出你最愛的角色？',
+        cta_title2: '試試 {brand}',
+        cta_desc: 'PixAI 可以一鍵生成你喜歡的動漫角色、遊戲場景，完全免費',
+        cta_btn: '去 PixAI 創作 →',
+        style_suffix: '風格',
+        toast_saved: '圖片已保存！',
+        toast_copied: '文案已複製！',
+        toast_dup: '這部作品已經選過了',
+        toast_full: '已選滿 9 部',
+        toast_not_found: '未找到該作品，請手動搜尋',
+        toast_network_error: '網路錯誤，請手動搜尋',
+        loading: '正在生成九宮格...',
+        confirm_switch: '切換將清空已選的 {n} 部作品，確定嗎？',
+        qr_text: '掃碼製作你的專屬九宮格',
+        share_prefix: '構成我的九部{kind}：\n',
+        share_suffix: '\n\n來製作你的專屬九宮格吧！→ pixai.art\n#構成我的九部作品 #PixAI',
+        card_title: '構成我的九部{kind}',
+        og_title: '構成我的九部作品 — 你的專屬九宮格',
+        og_desc: '選擇9部最能代表你的遊戲或動畫，生成精美九宮格卡片，和朋友一起分享！',
+        page_title: '構成我的九部作品 | Powered by PixAI',
+      }
+    };
+
+    // ===== HOT PICKS DATA (i18n) =====
+    const hotData = {
+      game: [
+        { ja:'原神', ko:'원신', en:'Genshin Impact', 'zh-TW':'原神', search:'原神' },
+        { ja:'ゼルダの伝説', ko:'젤다의 전설', en:'The Legend of Zelda', 'zh-TW':'薩爾達傳說', search:'ゼルダの伝説' },
+        { ja:'エルデンリング', ko:'엘든 링', en:'Elden Ring', 'zh-TW':'艾爾登法環', search:'Elden Ring' },
+        { ja:'SEKIRO', ko:'세키로', en:'Sekiro', 'zh-TW':'隻狼', search:'SEKIRO' },
+        { ja:'ペルソナ5', ko:'페르소나 5', en:'Persona 5', 'zh-TW':'女神異聞錄5', search:'ペルソナ5' },
+        { ja:'ホロウナイト', ko:'할로우 나이트', en:'Hollow Knight', 'zh-TW':'空洞騎士', search:'Hollow Knight' },
+        { ja:'スターデューバレー', ko:'스타듀 밸리', en:'Stardew Valley', 'zh-TW':'星露谷物語', search:'Stardew Valley' },
+        { ja:'FF7', ko:'파이널 판타지 7', en:'Final Fantasy VII', 'zh-TW':'最終幻想7', search:'Final Fantasy VII' },
+        { ja:'ウィッチャー3', ko:'위쳐 3', en:'The Witcher 3', 'zh-TW':'巫師3', search:'The Witcher 3' },
+        { ja:'あつまれ どうぶつの森', ko:'모여봐요 동물의 숲', en:'Animal Crossing', 'zh-TW':'動物森友會', search:'あつまれ どうぶつの森' },
+        { ja:'モンスターハンター', ko:'몬스터 헌터', en:'Monster Hunter', 'zh-TW':'魔物獵人', search:'モンスターハンター' },
+        { ja:'BG3', ko:'발더스 게이트 3', en:"Baldur's Gate 3", 'zh-TW':'柏德之門3', search:"Baldur's Gate 3" },
+      ],
+      anime: [
+        { ja:'進撃の巨人', ko:'진격의 거인', en:'Attack on Titan', 'zh-TW':'進擊的巨人', search:'進撃の巨人' },
+        { ja:'鬼滅の刃', ko:'귀멸의 칼날', en:'Demon Slayer', 'zh-TW':'鬼滅之刃', search:'鬼滅の刃' },
+        { ja:'SPY×FAMILY', ko:'스파이 패밀리', en:'SPY×FAMILY', 'zh-TW':'間諜家家酒', search:'SPY×FAMILY' },
+        { ja:'呪術廻戦', ko:'주술회전', en:'Jujutsu Kaisen', 'zh-TW':'咒術迴戰', search:'呪術廻戦' },
+        { ja:'葬送のフリーレン', ko:'장송의 프리렌', en:'Frieren', 'zh-TW':'葬送的芙莉蓮', search:'葬送のフリーレン' },
+        { ja:'ぼっち・ざ・ろっく！', ko:'봇치 더 록!', en:'Bocchi the Rock!', 'zh-TW':'孤獨搖滾', search:'ぼっち・ざ・ろっく！' },
+        { ja:'かぐや様は告らせたい', ko:'카구야님은 고백받고 싶어', en:'Kaguya-sama', 'zh-TW':'輝夜姬想讓人告白', search:'かぐや様は告らせたい' },
+        { ja:'鋼の錬金術師', ko:'강철의 연금술사', en:'Fullmetal Alchemist', 'zh-TW':'鋼之鍊金術師', search:'鋼の錬金術師' },
+        { ja:'STEINS;GATE', ko:'슈타인즈 게이트', en:'Steins;Gate', 'zh-TW':'命運石之門', search:'STEINS;GATE' },
+        { ja:'ヴァイオレット・エヴァーガーデン', ko:'바이올렛 에버가든', en:'Violet Evergarden', 'zh-TW':'紫羅蘭永恆花園', search:'ヴァイオレット・エヴァーガーデン' },
+        { ja:'CLANNAD', ko:'클라나드', en:'CLANNAD', 'zh-TW':'CLANNAD', search:'CLANNAD' },
+        { ja:'君の名は。', ko:'너의 이름은.', en:'Your Name', 'zh-TW':'你的名字', search:'君の名は。' },
+      ]
+    };
+
+    // ===== LANGUAGE DETECTION & STATE =====
+    function detectLang() {
+      const langs = navigator.languages || [navigator.language || 'en'];
+      for (const l of langs) {
+        if (l.startsWith('ja')) return 'ja';
+        if (l.startsWith('ko')) return 'ko';
+        if (l === 'zh-TW' || l === 'zh-Hant' || l.startsWith('zh-Hant')) return 'zh-TW';
+      }
+      return 'en';
+    }
+    let currentLang = localStorage.getItem('my9_lang') || detectLang();
+    if (!I18N[currentLang]) currentLang = 'en';
+
+    function t(key, params) {
+      let s = (I18N[currentLang] && I18N[currentLang][key]) || I18N.en[key] || key;
+      if (params) {
+        Object.keys(params).forEach(k => {
+          s = s.replace(new RegExp('\\{' + k + '\\}', 'g'), params[k]);
+        });
+      }
+      return s;
+    }
+
+    function kindT() {
+      return currentKind === 'game' ? t('kind_game') : t('kind_anime');
+    }
+
+    // ===== STATE =====
+    let currentKind = 'game';
+    let slots = Array(9).fill(null);
+    let activeSlot = -1;
+    let searchCache = {};
+
+    // ===== LANGUAGE SWITCHER =====
+    const LANG_LABELS = { ja: '日本語', ko: '한국어', en: 'EN', 'zh-TW': '繁中' };
+    function renderLangSwitcher() {
+      const el = document.getElementById('langSwitcher');
+      el.innerHTML = Object.keys(LANG_LABELS).map(lang =>
+        `<button class="lang-btn${lang===currentLang?' active':''}" data-lang="${lang}">${LANG_LABELS[lang]}</button>`
+      ).join('');
+      el.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentLang = btn.dataset.lang;
+          localStorage.setItem('my9_lang', currentLang);
+          applyLang();
+        });
+      });
+    }
+
+    // ===== APPLY LANGUAGE =====
+    function applyLang() {
+      document.documentElement.lang = currentLang;
+      document.title = t('page_title');
+
+      // Meta tags
+      const kind = kindT();
+      document.getElementById('metaDesc').content = t('og_desc');
+      document.getElementById('ogTitle').content = t('og_title');
+      document.getElementById('ogDesc').content = t('og_desc');
+      document.getElementById('twTitle').content = t('og_title');
+      document.getElementById('twDesc').content = t('og_desc');
+
+      // Main page
+      document.getElementById('mainTitle').textContent = t('title', { kind: kind });
+      document.getElementById('tabGame').textContent = t('tab_game');
+      document.getElementById('tabAnime').textContent = t('tab_anime');
+      document.getElementById('mainSubtitle').textContent = t('subtitle', { kind: kind });
+      document.getElementById('creatorLabel').textContent = t('creator_label');
+      document.getElementById('creatorName').placeholder = t('creator_placeholder');
+      document.getElementById('hotPicksLabel').textContent = t('hot_picks_label');
+
+      // Modal
+      document.getElementById('modalSearchBtn').textContent = t('search_btn');
+      document.getElementById('modalCloseBtn').textContent = t('close');
+
+      // Result page
+      document.getElementById('resultTitle').textContent = t('result_title');
+      document.getElementById('resultSubtitle').textContent = t('result_subtitle');
+      document.getElementById('btnSave').textContent = t('btn_save');
+      document.getElementById('btnCopy').textContent = t('btn_copy');
+      document.getElementById('btnReset').textContent = t('btn_reset');
+
+      // CTA
+      const ctaTitleEl = document.getElementById('ctaTitle');
+      ctaTitleEl.innerHTML = t('cta_title') + '<br>' + t('cta_title2', { brand: '<span class="brand">PixAI</span>' });
+      document.getElementById('ctaDesc').textContent = t('cta_desc');
+      document.getElementById('ctaBtn').textContent = t('cta_btn');
+
+      // Loading
+      document.getElementById('loadingText').textContent = t('loading');
+
+      // Switcher
+      renderLangSwitcher();
+
+      // Dynamic content
+      renderSlots();
+      updateGenBtn();
+      renderHotPicks();
+      updateSocialProof();
+    }
+
+    // ===== KIND SWITCH =====
+    function setKind(kind) {
+      if (kind === currentKind) return;
+      const filled = slots.filter(Boolean).length;
+      if (filled > 0 && !confirm(t('confirm_switch', { n: filled }))) return;
+      currentKind = kind;
+      document.querySelectorAll('.kind-tab').forEach(tab =>
+        tab.classList.toggle('active', tab.dataset.kind === kind)
+      );
+      slots = Array(9).fill(null);
+      searchCache = {};
+      // Update kind-dependent text
+      document.getElementById('mainTitle').textContent = t('title', { kind: kindT() });
+      document.getElementById('mainSubtitle').textContent = t('subtitle', { kind: kindT() });
+      renderSlots();
+      updateGenBtn();
+      renderHotPicks();
+    }
+
+    // ===== SLOTS =====
+    function renderSlots() {
+      const grid = document.getElementById('slotsGrid');
+      grid.innerHTML = slots.map((s, i) => {
+        if (s) {
+          return `<div class="slot filled" onclick="openSlot(${i})">
+            <div class="slot-cover" style="background-image:url('${s.cover}')"></div>
+            <div class="slot-overlay"></div>
+            <div class="slot-title">${s.title}</div>
+            <div class="slot-remove" onclick="event.stopPropagation();removeSlot(${i})">✕</div>
+          </div>`;
+        }
+        return `<div class="slot" onclick="openSlot(${i})">
+          <span class="slot-num">${i+1}</span>
+          <span class="slot-add">＋</span>
+          <span class="slot-text">${t('select')}</span>
+        </div>`;
+      }).join('');
+    }
+
+    function removeSlot(i) {
+      slots[i] = null;
+      renderSlots();
+      updateGenBtn();
+      renderHotPicks();
+    }
+
+    function updateGenBtn() {
+      const btn = document.getElementById('btnGenMain');
+      const filled = slots.filter(Boolean).length;
+      if (filled === 9) {
+        btn.disabled = false;
+        btn.textContent = t('btn_generate');
+      } else {
+        btn.disabled = true;
+        btn.textContent = t('btn_need_more', { n: 9 - filled });
+      }
+    }
+
+    // ===== SEARCH MODAL =====
+    function openSlot(i) {
+      activeSlot = i;
+      document.getElementById('modalTitle').textContent = t('search_title', { kind: kindT() });
+      document.getElementById('modalSearchInput').value = '';
+      document.getElementById('modalSearchInput').placeholder = t('search_placeholder');
+      document.getElementById('modalResults').innerHTML = `<div class="modal-empty">${t('search_empty')}</div>`;
+      document.getElementById('searchModal').classList.add('open');
+      setTimeout(() => document.getElementById('modalSearchInput').focus(), 100);
+    }
+
+    function closeModal() {
+      document.getElementById('searchModal').classList.remove('open');
+    }
+
+    let searchLock = false;
+    async function doSearch() {
+      const q = document.getElementById('modalSearchInput').value.trim();
+      if (!q || searchLock) return;
+      searchLock = true;
+      setTimeout(() => searchLock = false, 500);
+
+      const container = document.getElementById('modalResults');
+      container.innerHTML = `<div class="modal-loading">${t('search_loading')}</div>`;
+
+      const cacheKey = `${currentKind}:${q}`;
+      if (searchCache[cacheKey]) {
+        renderResults(searchCache[cacheKey]);
+        return;
+      }
+
+      try {
+        const type = currentKind === 'game' ? 4 : 2;
+        const resp = await fetch(`https://api.bgm.tv/search/subject/${encodeURIComponent(q)}?type=${type}&responseGroup=small&max_results=20`);
+        if (!resp.ok) throw new Error('API error');
+        const data = await resp.json();
+        const results = (data.list || []).filter(item =>
+          item.images && item.images.common
+        ).map(item => ({
+          id: item.id,
+          title: item.name || item.name_cn,
+          cover: (item.images.common || item.images.medium || '').replace('http://', 'https://'),
+          coverLarge: (item.images.large || item.images.common || '').replace('http://', 'https://'),
+        }));
+        searchCache[cacheKey] = results;
+        renderResults(results);
+      } catch (e) {
+        container.innerHTML = `<div class="modal-empty">${t('search_fail')}</div>`;
+      }
+    }
+
+    let lastSearchResults = [];
+    function renderResults(results) {
+      const container = document.getElementById('modalResults');
+      if (!results.length) {
+        container.innerHTML = `<div class="modal-empty">${t('search_no_result')}</div>`;
+        return;
+      }
+      lastSearchResults = results;
+      container.innerHTML = `<div class="modal-results-grid">${
+        results.map((r, idx) => `
+          <div class="result-card" data-idx="${idx}">
+            <img src="${r.cover}" alt="${escapeHtml(r.title)}" loading="lazy"
+                 onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 3 4%22><rect fill=%22%23e8e0dc%22 width=%223%22 height=%224%22/></svg>'">
+            <div class="result-name">${escapeHtml(r.title)}</div>
+          </div>
+        `).join('')
+      }</div>`;
+      container.querySelectorAll('.result-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const r = lastSearchResults[parseInt(card.dataset.idx)];
+          if (r) selectResult(r.id, r.title, r.cover, r.coverLarge);
+        });
+      });
+    }
+
+    function escapeHtml(s) {
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+
+    function selectResult(id, title, cover, coverLarge) {
+      if (slots.some(s => s && s.id === id)) {
+        showToast(t('toast_dup'));
+        return;
+      }
+      cover = (cover || '').replace('http://', 'https://');
+      coverLarge = (coverLarge || cover).replace('http://', 'https://');
+      slots[activeSlot] = { id, title, cover, coverLarge };
+      closeModal();
+      renderSlots();
+      updateGenBtn();
+      renderHotPicks();
+
+      const nextEmpty = slots.findIndex(s => !s);
+      if (nextEmpty >= 0 && slots.filter(Boolean).length < 9) {
+        setTimeout(() => openSlot(nextEmpty), 300);
+      }
+    }
+
+    // ===== CARD GENERATION =====
+    function generateCard() {
+      if (slots.filter(Boolean).length < 9) return;
+      document.getElementById('loadingOverlay').classList.add('show');
+      bumpGenCount();
+      showPage('result');
+      loadImagesAndDraw();
+    }
+
+    async function loadImagesAndDraw() {
+      const canvas = document.getElementById('cardCanvas');
+      const ctx = canvas.getContext('2d');
+      const W = 1080, H = 1350;
+      canvas.width = W; canvas.height = H;
+
+      ctx.fillStyle = '#faf7f5';
+      ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = '#b0a49c';
+      ctx.font = '24px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(t('search_loading'), W/2, H/2);
+
+      const proxyUrl = url => `https://wsrv.nl/?url=${encodeURIComponent(url)}`;
+      const images = await Promise.all(slots.map(s => {
+        return new Promise(resolve => {
+          if (!s) { resolve(null); return; }
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = () => resolve(img);
+          img.onerror = () => resolve(null);
+          img.src = proxyUrl(s.coverLarge || s.cover);
+        });
+      }));
+
+      drawFinalCard(canvas, ctx, W, images);
+      document.getElementById('loadingOverlay').classList.remove('show');
+    }
+
+    const CARD_FONT = '"Hiragino Sans","PingFang TC","Noto Sans JP","Noto Sans KR","Noto Sans TC","Microsoft JhengHei",sans-serif';
+
+    function drawFinalCard(canvas, ctx, W, images) {
+      const creator = document.getElementById('creatorName').value.trim();
+
+      const pad = 36, gap = 10;
+      const gridW = W - pad*2;
+      const cellW = (gridW - gap*2) / 3;
+      const cellH = cellW * 1.2;
+      const startY = creator ? 124 : 100;
+      const actualH = startY + 3*(cellH+gap) + 120;
+
+      canvas.height = actualH;
+
+      // Background
+      ctx.fillStyle = '#faf7f5';
+      ctx.fillRect(0, 0, W, actualH);
+
+      // Top accent bar
+      ctx.fillStyle = '#e85d75';
+      ctx.fillRect(0, 0, W, 5);
+
+      // Title
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#2c2420';
+      ctx.font = `800 44px ${CARD_FONT}`;
+      ctx.fillText(t('card_title', { kind: kindT() }), W/2, 60);
+
+      // Creator name
+      if (creator) {
+        ctx.font = `400 20px ${CARD_FONT}`;
+        ctx.fillStyle = '#7a6e66';
+        ctx.fillText(`by ${creator}`, W/2, 96);
+      }
+
+      // 3x3 Grid
+      slots.forEach((s, i) => {
+        if (!s) return;
+        const col = i % 3, row = Math.floor(i / 3);
+        const x = pad + col*(cellW+gap), y = startY + row*(cellH+gap);
+
+        ctx.save();
+        ctx.shadowColor = 'rgba(0,0,0,0.08)';
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetY = 2;
+        ctx.fillStyle = '#fff';
+        roundRect(ctx, x, y, cellW, cellH, 12);
+        ctx.fill();
+        ctx.restore();
+
+        ctx.save();
+        roundRect(ctx, x, y, cellW, cellH, 12);
+        ctx.clip();
+
+        const img = images[i];
+        if (img) {
+          const ir = img.width/img.height, cr = cellW/cellH;
+          let sx,sy,sw,sh;
+          if (ir > cr) { sh=img.height;sw=sh*cr;sx=(img.width-sw)/2;sy=0; }
+          else { sw=img.width;sh=sw/cr;sx=0;sy=(img.height-sh)/2; }
+          ctx.drawImage(img, sx,sy,sw,sh, x,y,cellW,cellH);
+        } else {
+          ctx.fillStyle = '#e8e0dc';
+          ctx.fillRect(x, y, cellW, cellH);
+        }
+        ctx.restore();
+
+        const og = ctx.createLinearGradient(x, y+cellH*0.55, x, y+cellH);
+        og.addColorStop(0, 'rgba(0,0,0,0)');
+        og.addColorStop(1, 'rgba(0,0,0,0.7)');
+        ctx.fillStyle = og;
+        roundRect(ctx, x, y, cellW, cellH, 12);
+        ctx.fill();
+
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'alphabetic';
+        ctx.fillStyle = '#fff';
+        ctx.font = `bold 20px ${CARD_FONT}`;
+        ctx.fillText(truncText(ctx, s.title, cellW-16), x+8, y+cellH-12);
+      });
+
+      // Bottom bar
+      const botY = startY + 3*(cellH+gap) + 16;
+      ctx.fillStyle = '#e8e0dc';
+      ctx.fillRect(pad, botY, gridW, 1);
+
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.font = `700 22px ${CARD_FONT}`;
+      ctx.fillStyle = '#e85d75';
+      ctx.fillText('Powered by PixAI', pad+8, botY+36);
+
+      ctx.font = `400 16px ${CARD_FONT}`;
+      ctx.fillStyle = '#b0a49c';
+      ctx.fillText(t('qr_text'), pad+8, botY+64);
+
+      // QR code
+      const qrSize = 80;
+      const qrX = W - pad - qrSize - 8;
+      const qrY = botY + 12;
+      drawMiniQR(ctx, qrX, qrY, qrSize, SITE_URL);
+    }
+
+    const SITE_URL = 'https://pixai.art/my9';
+    function drawMiniQR(ctx, x, y, size, url) {
+      ctx.save();
+      ctx.fillStyle = '#fff';
+      roundRect(ctx, x-4, y-4, size+8, size+8, 6);
+      ctx.fill();
+
+      const seed = url.split('').reduce((a,c)=>((a<<5)-a)+c.charCodeAt(0)|0, 0);
+      const grid = 11;
+      const cellSize = size / grid;
+
+      const drawFinder = (fx, fy) => {
+        ctx.fillStyle = '#2c2420';
+        ctx.fillRect(x+fx*cellSize, y+fy*cellSize, 7*cellSize, 7*cellSize);
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(x+(fx+1)*cellSize, y+(fy+1)*cellSize, 5*cellSize, 5*cellSize);
+        ctx.fillStyle = '#2c2420';
+        ctx.fillRect(x+(fx+2)*cellSize, y+(fy+2)*cellSize, 3*cellSize, 3*cellSize);
+      };
+      drawFinder(0, 0);
+      drawFinder(grid-7, 0);
+      drawFinder(0, grid-7);
+
+      ctx.fillStyle = '#2c2420';
+      let s = Math.abs(seed);
+      for (let r = 0; r < grid; r++) {
+        for (let c = 0; c < grid; c++) {
+          if ((r<7&&c<7)||(r<7&&c>=grid-7)||(r>=grid-7&&c<7)) continue;
+          s = (s * 1103515245 + 12345) & 0x7fffffff;
+          if (s % 3 !== 0) {
+            ctx.fillRect(x+c*cellSize, y+r*cellSize, cellSize, cellSize);
+          }
+        }
+      }
+      ctx.restore();
+    }
+
+    function roundRect(ctx,x,y,w,h,r){
+      ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);
+      ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);
+      ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);
+      ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);
+      ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+    }
+
+    function truncText(ctx,t,mw){
+      if(ctx.measureText(t).width<=mw)return t;
+      while(t.length>0&&ctx.measureText(t+'…').width>mw)t=t.slice(0,-1);
+      return t+'…';
+    }
+
+    // ===== ACTIONS =====
+    function saveCard(){
+      const c=document.getElementById('cardCanvas');
+      c.toBlob(b=>{
+        const u=URL.createObjectURL(b);const a=document.createElement('a');
+        a.href=u;a.download=`my9_${kindT()}_PixAI.png`;a.click();
+        URL.revokeObjectURL(u);showToast(t('toast_saved'));
+      },'image/png');
+    }
+
+    function copyShareText(){
+      const titles=slots.filter(Boolean).map((s,i)=>`${i+1}. ${s.title}`);
+      const text = t('share_prefix', { kind: kindT() }) + titles.join('\n') + t('share_suffix');
+      navigator.clipboard.writeText(text).then(()=>showToast(t('toast_copied'))).catch(()=>{
+        const ta=document.createElement('textarea');ta.value=text;
+        document.body.appendChild(ta);ta.select();document.execCommand('copy');
+        document.body.removeChild(ta);showToast(t('toast_copied'));
+      });
+    }
+
+    function resetAll(){
+      slots=Array(9).fill(null);
+      renderSlots();updateGenBtn();renderHotPicks();showPage('main');
+    }
+
+    function showPage(id){
+      document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+      document.getElementById('page-'+id).classList.add('active');
+      window.scrollTo(0,0);
+
+      if(id==='result'){
+        const tags=document.getElementById('promptTags');
+        const suffix = t('style_suffix');
+        const picks=slots.filter(Boolean).sort(()=>0.5-Math.random()).slice(0,4);
+        tags.innerHTML=picks.map(s=>
+          `<span class="prompt-tag">${s.title} ${suffix}</span>`
+        ).join('');
+      }
+    }
+
+    function showToast(m){
+      const e=document.getElementById('toast');
+      e.textContent=m;e.classList.add('show');
+      setTimeout(()=>e.classList.remove('show'),2500);
+    }
+
+    // ===== HOT PICKS =====
+    function renderHotPicks() {
+      const list = document.getElementById('hotPicksList');
+      const picks = hotData[currentKind] || [];
+      const selectedTitles = slots.filter(Boolean).map(s => s.title);
+      list.innerHTML = picks.map(item => {
+        const displayName = item[currentLang] || item.en;
+        const added = selectedTitles.some(t =>
+          t.includes(item.search) || item.search.includes(t) ||
+          Object.values(item).some(v => typeof v === 'string' && (t.includes(v) || v.includes(t)))
+        );
+        return `<span class="hot-pick${added?' added':''}" data-search="${escapeHtml(item.search)}">${displayName}</span>`;
+      }).join('');
+      list.querySelectorAll('.hot-pick:not(.added)').forEach(el => {
+        el.addEventListener('click', () => quickAddPick(el.dataset.search));
+      });
+    }
+
+    async function quickAddPick(searchKey) {
+      const empty = slots.findIndex(s => !s);
+      if (empty < 0) { showToast(t('toast_full')); return; }
+      activeSlot = empty;
+
+      try {
+        const type = currentKind === 'game' ? 4 : 2;
+        const resp = await fetch(`https://api.bgm.tv/search/subject/${encodeURIComponent(searchKey)}?type=${type}&responseGroup=small&max_results=5`);
+        const data = await resp.json();
+        const item = (data.list || []).find(i => i.images && i.images.common);
+        if (item) {
+          const title = item.name || item.name_cn;
+          const cover = (item.images.common || '').replace('http://','https://');
+          const coverLarge = (item.images.large || cover).replace('http://','https://');
+          selectResult(item.id, title, cover, coverLarge);
+          closeModal();
+        } else {
+          showToast(t('toast_not_found'));
+        }
+      } catch(e) {
+        showToast(t('toast_network_error'));
+      }
+    }
+
+    // ===== SOCIAL PROOF =====
+    function getGenCount() {
+      let c = parseInt(localStorage.getItem('my9_gen_count') || '0');
+      if (!c) { c = 2847 + Math.floor(Math.random()*500); localStorage.setItem('my9_gen_count', c); }
+      return c;
+    }
+    function bumpGenCount() {
+      let c = getGenCount() + 1;
+      localStorage.setItem('my9_gen_count', c);
+      updateSocialProof();
+    }
+    function updateSocialProof() {
+      document.getElementById('socialProof').textContent = t('social_proof', { n: getGenCount().toLocaleString() });
+    }
+
+    // ===== INIT =====
+    applyLang();
+  </script>
+</body>
+</html>
