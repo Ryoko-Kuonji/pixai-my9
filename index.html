@@ -295,8 +295,6 @@
     }
     .btn-save{background:var(--accent);color:#fff;box-shadow:0 4px 12px rgba(232,93,117,0.25)}
     .btn-save:hover{background:var(--accent-dark)}
-    .btn-copy{background:var(--surface);color:var(--text);border:1.5px solid var(--border)}
-    .btn-copy:hover{border-color:var(--accent);color:var(--accent)}
     .btn-share{background:var(--surface);color:var(--text);border:1.5px solid var(--border)}
     .btn-share:hover{border-color:var(--accent);color:var(--accent)}
     .btn-reset{background:transparent;color:var(--text2);border:1.5px solid var(--border)}
@@ -388,6 +386,7 @@
       .lang-btn{padding:4px 8px;font-size:0.68rem}
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
 </head>
 <body>
 
@@ -450,7 +449,6 @@
     <div class="action-buttons fade-in fade-in-1">
       <button class="btn-action btn-save" onclick="saveCard()" id="btnSave"></button>
       <button class="btn-action btn-share" onclick="shareLink()" id="btnShareLink"></button>
-      <button class="btn-action btn-copy" onclick="copyShareText()" id="btnCopy"></button>
       <button class="btn-action btn-reset" onclick="resetAll()" id="btnReset"></button>
     </div>
     <div class="make-mine-cta fade-in fade-in-1" id="makeMine" style="display:none">
@@ -495,7 +493,6 @@
         result_title: 'あなたの九宮格',
         result_subtitle: '画像を保存して友達にシェアしよう！',
         btn_save: '💾 画像を保存',
-        btn_copy: '📋 テキストをコピー',
         btn_reset: '↩ やり直す',
         cta_title: 'AIでお気に入りのキャラを描こう！',
         cta_title2: '{brand}を試してみて',
@@ -503,22 +500,19 @@
         cta_btn: 'PixAIで創作する →',
         style_suffix: 'スタイル',
         toast_saved: '画像を保存しました！',
-        toast_copied: 'テキストをコピーしました！',
         toast_dup: 'この作品は既に選択済みです',
         toast_full: '9作品選択済み',
         toast_not_found: '作品が見つかりません、手動で検索してください',
         toast_network_error: 'ネットワークエラー、手動で検索してください',
         loading: '九宮格を生成中...',
         confirm_switch: '切り替えると選択済みの {n} 作品がクリアされます。よろしいですか？',
-        qr_text: 'スキャンして九宮格を作成',
+        qr_text: 'スキャンして九宮格を見る',
         btn_share_link: '🔗 リンクをシェア',
         toast_link_copied: 'リンクをコピーしました！',
         btn_make_mine: '🎮 自分のも作る！',
         shared_viewing: '{creator} さんの九宮格',
         shared_viewing_anon: 'みんなの九宮格',
         back_home: '← ホームに戻る',
-        share_prefix: '私を構成する9つの{kind}：\n',
-        share_suffix: '\n\nあなたも作ろう！→ {url}\n#私を構成する9つの作品 #PixAI',
         card_title: '私を構成する9つの{kind}',
         og_title: '私を構成する9つの作品 — あなたの九宮格',
         og_desc: 'あなたを構成する9つのゲームやアニメを選んで、九宮格カードを作成して共有しよう！',
@@ -546,7 +540,6 @@
         result_title: '나만의 격자',
         result_subtitle: '이미지를 저장하고 친구에게 공유하세요!',
         btn_save: '💾 이미지 저장',
-        btn_copy: '📋 텍스트 복사',
         btn_reset: '↩ 다시 선택',
         cta_title: 'AI로 좋아하는 캐릭터를 그려보세요!',
         cta_title2: '{brand}를 사용해 보세요',
@@ -554,22 +547,19 @@
         cta_btn: 'PixAI에서 만들기 →',
         style_suffix: '스타일',
         toast_saved: '이미지 저장됨!',
-        toast_copied: '텍스트 복사됨!',
         toast_dup: '이미 선택된 작품입니다',
         toast_full: '9개 모두 선택됨',
         toast_not_found: '작품을 찾을 수 없습니다, 직접 검색하세요',
         toast_network_error: '네트워크 오류, 직접 검색하세요',
         loading: '격자 생성 중...',
         confirm_switch: '전환하면 선택한 {n}개 작품이 초기화됩니다. 계속하시겠습니까?',
-        qr_text: 'QR 스캔하여 격자 만들기',
+        qr_text: 'QR 스캔하여 격자 보기',
         btn_share_link: '🔗 링크 공유',
         toast_link_copied: '링크 복사됨!',
         btn_make_mine: '🎮 나도 만들기!',
         shared_viewing: '{creator}님의 격자',
         shared_viewing_anon: '친구의 격자',
         back_home: '← 홈으로',
-        share_prefix: '나를 구성하는 9개의 {kind}：\n',
-        share_suffix: '\n\n나도 만들어 보세요! → {url}\n#나를구성하는9개의작품 #PixAI',
         card_title: '나를 구성하는 9개의 {kind}',
         og_title: '나를 구성하는 9개의 작품 — 나만의 격자',
         og_desc: '당신을 구성하는 9개의 게임이나 애니메이션을 선택하고, 격자 카드를 만들어 공유하세요!',
@@ -597,7 +587,6 @@
         result_title: 'Your Grid',
         result_subtitle: 'Save and share with friends!',
         btn_save: '💾 Save Image',
-        btn_copy: '📋 Copy Text',
         btn_reset: '↩ Start Over',
         cta_title: 'Draw your favorite characters with AI!',
         cta_title2: 'Try {brand}',
@@ -605,22 +594,19 @@
         cta_btn: 'Create on PixAI →',
         style_suffix: 'style',
         toast_saved: 'Image saved!',
-        toast_copied: 'Text copied!',
         toast_dup: 'Already selected',
         toast_full: 'All 9 selected',
         toast_not_found: 'Not found, try manual search',
         toast_network_error: 'Network error, try manual search',
         loading: 'Generating grid...',
         confirm_switch: 'Switching will clear your {n} selected works. Continue?',
-        qr_text: 'Scan to create your grid',
+        qr_text: 'Scan to view this grid',
         btn_share_link: '🔗 Share Link',
         toast_link_copied: 'Link copied!',
         btn_make_mine: '🎮 Make My Own!',
         shared_viewing: "{creator}'s Grid",
         shared_viewing_anon: "Someone's Grid",
         back_home: '← Home',
-        share_prefix: '9 {kind} That Define Me:\n',
-        share_suffix: '\n\nCreate yours! → {url}\n#9ThatDefineMe #PixAI',
         card_title: '9 {kind} That Define Me',
         og_title: '9 That Define Me — Your Grid',
         og_desc: 'Pick 9 games or anime that define you, generate a beautiful grid card, and share with friends!',
@@ -648,7 +634,6 @@
         result_title: '你的專屬九宮格',
         result_subtitle: '長按保存圖片，分享給朋友吧！',
         btn_save: '💾 保存圖片',
-        btn_copy: '📋 複製文案',
         btn_reset: '↩ 重新選擇',
         cta_title: '想用 AI 畫出你最愛的角色？',
         cta_title2: '試試 {brand}',
@@ -656,22 +641,19 @@
         cta_btn: '去 PixAI 創作 →',
         style_suffix: '風格',
         toast_saved: '圖片已保存！',
-        toast_copied: '文案已複製！',
         toast_dup: '這部作品已經選過了',
         toast_full: '已選滿 9 部',
         toast_not_found: '未找到該作品，請手動搜尋',
         toast_network_error: '網路錯誤，請手動搜尋',
         loading: '正在生成九宮格...',
         confirm_switch: '切換將清空已選的 {n} 部作品，確定嗎？',
-        qr_text: '掃碼製作你的專屬九宮格',
+        qr_text: '掃碼查看這份九宮格',
         btn_share_link: '🔗 分享連結',
         toast_link_copied: '連結已複製！',
         btn_make_mine: '🎮 我也來做一個！',
         shared_viewing: '{creator} 的九宮格',
         shared_viewing_anon: '好友的九宮格',
         back_home: '← 返回首頁',
-        share_prefix: '構成我的九部{kind}：\n',
-        share_suffix: '\n\n你也來做一個吧！→ {url}\n#構成我的九部作品 #PixAI',
         card_title: '構成我的九部{kind}',
         og_title: '構成我的九部作品 — 你的專屬九宮格',
         og_desc: '選擇9部最能代表你的遊戲或動畫，生成精美九宮格卡片，和朋友一起分享！',
@@ -764,7 +746,6 @@
       document.getElementById('resultSubtitle').textContent = t('result_subtitle');
       document.getElementById('btnSave').textContent = t('btn_save');
       document.getElementById('btnShareLink').textContent = t('btn_share_link');
-      document.getElementById('btnCopy').textContent = t('btn_copy');
       document.getElementById('btnReset').textContent = t('btn_reset');
       document.getElementById('backHomeLink').textContent = t('back_home');
       document.getElementById('btnMakeMine').textContent = t('btn_make_mine');
@@ -1090,44 +1071,30 @@
       ctx.fillStyle = '#b0a49c';
       ctx.fillText(t('qr_text'), pad+8, botY+64);
 
-      // QR code
+      // QR code — real, scannable, points to share URL
       const qrSize = 80;
       const qrX = W - pad - qrSize - 8;
       const qrY = botY + 12;
-      drawMiniQR(ctx, qrX, qrY, qrSize, SITE_URL);
+      drawRealQR(ctx, qrX, qrY, qrSize, buildShareUrl());
     }
 
-    const SITE_URL = 'https://pixai.art/my9';
-    function drawMiniQR(ctx, x, y, size, url) {
+    function drawRealQR(ctx, x, y, size, url) {
+      const qr = qrcode(0, 'L');
+      qr.addData(url);
+      qr.make();
+      const count = qr.getModuleCount();
+      const cellSize = size / count;
       ctx.save();
+      // White background with padding
       ctx.fillStyle = '#fff';
       roundRect(ctx, x-4, y-4, size+8, size+8, 6);
       ctx.fill();
-
-      const seed = url.split('').reduce((a,c)=>((a<<5)-a)+c.charCodeAt(0)|0, 0);
-      const grid = 11;
-      const cellSize = size / grid;
-
-      const drawFinder = (fx, fy) => {
-        ctx.fillStyle = '#2c2420';
-        ctx.fillRect(x+fx*cellSize, y+fy*cellSize, 7*cellSize, 7*cellSize);
-        ctx.fillStyle = '#fff';
-        ctx.fillRect(x+(fx+1)*cellSize, y+(fy+1)*cellSize, 5*cellSize, 5*cellSize);
-        ctx.fillStyle = '#2c2420';
-        ctx.fillRect(x+(fx+2)*cellSize, y+(fy+2)*cellSize, 3*cellSize, 3*cellSize);
-      };
-      drawFinder(0, 0);
-      drawFinder(grid-7, 0);
-      drawFinder(0, grid-7);
-
+      // Draw modules
       ctx.fillStyle = '#2c2420';
-      let s = Math.abs(seed);
-      for (let r = 0; r < grid; r++) {
-        for (let c = 0; c < grid; c++) {
-          if ((r<7&&c<7)||(r<7&&c>=grid-7)||(r>=grid-7&&c<7)) continue;
-          s = (s * 1103515245 + 12345) & 0x7fffffff;
-          if (s % 3 !== 0) {
-            ctx.fillRect(x+c*cellSize, y+r*cellSize, cellSize, cellSize);
+      for (let r = 0; r < count; r++) {
+        for (let c = 0; c < count; c++) {
+          if (qr.isDark(r, c)) {
+            ctx.fillRect(x + c * cellSize, y + r * cellSize, cellSize + 0.5, cellSize + 0.5);
           }
         }
       }
@@ -1156,17 +1123,6 @@
         a.href=u;a.download=`my9_${kindT()}_PixAI.png`;a.click();
         URL.revokeObjectURL(u);showToast(t('toast_saved'));
       },'image/png');
-    }
-
-    function copyShareText(){
-      const titles=slots.filter(Boolean).map((s,i)=>`${i+1}. ${s.title}`);
-      const url = buildShareUrl();
-      const text = t('share_prefix', { kind: kindT() }) + titles.join('\n') + t('share_suffix', { url });
-      navigator.clipboard.writeText(text).then(()=>showToast(t('toast_copied'))).catch(()=>{
-        const ta=document.createElement('textarea');ta.value=text;
-        document.body.appendChild(ta);ta.select();document.execCommand('copy');
-        document.body.removeChild(ta);showToast(t('toast_copied'));
-      });
     }
 
     function resetAll(){
