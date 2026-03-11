@@ -655,7 +655,7 @@
       game: [
         { ja:'原神', ko:'원신', en:'Genshin Impact', 'zh-TW':'原神', search:'原神' },
         { ja:'ゼルダの伝説', ko:'젤다의 전설', en:'The Legend of Zelda', 'zh-TW':'薩爾達傳說', search:'ゼルダの伝説' },
-        { ja:'エルデンリング', ko:'엘든 링', en:'Elden Ring', 'zh-TW':'艾爾登法環', search:'Elden Ring' },
+        { ja:'エルデンリング', ko:'엘든 링', en:'Elden Ring', 'zh-TW':'艾爾登法環', search:'エルデンリング' },
         { ja:'SEKIRO', ko:'세키로', en:'Sekiro', 'zh-TW':'隻狼', search:'SEKIRO' },
         { ja:'ペルソナ5', ko:'페르소나 5', en:'Persona 5', 'zh-TW':'女神異聞錄5', search:'ペルソナ5' },
         { ja:'ホロウナイト', ko:'할로우 나이트', en:'Hollow Knight', 'zh-TW':'空洞騎士', search:'Hollow Knight' },
@@ -916,7 +916,10 @@
       container.querySelectorAll('.result-card').forEach(card => {
         card.addEventListener('click', () => {
           const r = lastSearchResults[parseInt(card.dataset.idx)];
-          if (r) selectResult(r.id, r.title, r.cover, r.coverLarge);
+          if (r) {
+            selectResult(r.id, r.title, r.cover, r.coverLarge);
+            autoAdvanceSlot();
+          }
         });
       });
     }
@@ -925,19 +928,30 @@
       return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
     }
 
-    function selectResult(id, title, cover, coverLarge) {
+    function selectResult(id, title, cover, coverLarge, targetSlot) {
       if (slots.some(s => s && s.id === id)) {
         showToast(t('toast_dup'));
         return;
       }
       cover = (cover || '').replace('http://', 'https://');
       coverLarge = (coverLarge || cover).replace('http://', 'https://');
-      slots[activeSlot] = { id, title, cover, coverLarge };
+      const slotIdx = targetSlot != null ? targetSlot : activeSlot;
+      if (slots[slotIdx]) {
+        // Slot already filled (race condition) — find next empty
+        const alt = slots.findIndex(s => !s);
+        if (alt < 0) return;
+        slots[alt] = { id, title, cover, coverLarge };
+      } else {
+        slots[slotIdx] = { id, title, cover, coverLarge };
+      }
       closeModal();
       renderSlots();
       updateGenBtn();
       renderHotPicks();
+    }
 
+    // Auto-advance to next empty slot (only for manual search flow)
+    function autoAdvanceSlot() {
       const nextEmpty = slots.findIndex(s => !s);
       if (nextEmpty >= 0 && slots.filter(Boolean).length < 9) {
         setTimeout(() => openSlot(nextEmpty), 300);
@@ -1201,10 +1215,12 @@
       });
     }
 
+    let quickAddLock = false;
     async function quickAddPick(searchKey) {
-      const empty = slots.findIndex(s => !s);
-      if (empty < 0) { showToast(t('toast_full')); return; }
-      activeSlot = empty;
+      if (quickAddLock) return;
+      const targetSlot = slots.findIndex(s => !s);
+      if (targetSlot < 0) { showToast(t('toast_full')); return; }
+      quickAddLock = true;
 
       try {
         const type = currentKind === 'game' ? 4 : 2;
@@ -1215,13 +1231,14 @@
           const title = item.name || item.name_cn;
           const cover = (item.images.common || '').replace('http://','https://');
           const coverLarge = (item.images.large || cover).replace('http://','https://');
-          selectResult(item.id, title, cover, coverLarge);
-          closeModal();
+          selectResult(item.id, title, cover, coverLarge, targetSlot);
         } else {
           showToast(t('toast_not_found'));
         }
       } catch(e) {
         showToast(t('toast_network_error'));
+      } finally {
+        quickAddLock = false;
       }
     }
 
