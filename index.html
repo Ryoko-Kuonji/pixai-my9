@@ -134,18 +134,6 @@
     .creator-input input:focus{border-color:var(--accent)}
     .creator-input input::placeholder{color:var(--text3)}
 
-    /* Hot picks */
-    .hot-picks{margin-bottom:18px;width:100%;max-width:420px}
-    .hot-picks-label{font-size:0.8rem;color:var(--text3);margin-bottom:8px;font-weight:500}
-    .hot-picks-list{display:flex;flex-wrap:wrap;gap:6px}
-    .hot-pick{
-      padding:5px 12px;border:1px solid var(--border);border-radius:16px;
-      font-size:0.78rem;color:var(--text2);cursor:pointer;
-      background:var(--white);transition:all 0.2s;white-space:nowrap;
-    }
-    .hot-pick:hover{border-color:var(--accent);color:var(--accent)}
-    .hot-pick.added{border-color:var(--accent);background:var(--accent-light);color:var(--accent);opacity:0.6;pointer-events:none}
-
     /* 3x3 Grid Slots */
     .slots-grid{
       display:grid;grid-template-columns:repeat(3,1fr);
@@ -403,10 +391,6 @@
       <input type="text" id="creatorName" maxlength="40">
     </div>
 
-    <div class="hot-picks fade-in fade-in-1" id="hotPicks">
-      <div class="hot-picks-label" id="hotPicksLabel"></div>
-      <div class="hot-picks-list" id="hotPicksList"></div>
-    </div>
 
     <div class="slots-grid fade-in fade-in-1" id="slotsGrid"></div>
 
@@ -471,7 +455,6 @@
         subtitle: '世界に伝えよう、あなたの愛する{kind}を。',
         creator_label: 'クリエイター（任意）',
         creator_placeholder: 'ニックネームを入力',
-        hot_picks_label: '🔥 人気おすすめ（タップで追加）',
         select: '選択',
         btn_need_more: 'あと {n} 作品選んでください',
         btn_generate: '九宮格を生成 ✨',
@@ -517,7 +500,6 @@
         subtitle: '세상에 전하세요, 당신이 사랑하는 {kind}을.',
         creator_label: '제작자 (선택)',
         creator_placeholder: '닉네임 입력',
-        hot_picks_label: '🔥 인기 추천 (탭하여 추가)',
         select: '선택',
         btn_need_more: '{n}개 더 선택하세요',
         btn_generate: '나만의 격자 만들기 ✨',
@@ -563,7 +545,6 @@
         subtitle: 'Share your favorite {kind} with the world.',
         creator_label: 'Creator (optional)',
         creator_placeholder: 'Enter your nickname',
-        hot_picks_label: '🔥 Popular Picks (tap to add)',
         select: 'Select',
         btn_need_more: 'Select {n} more',
         btn_generate: 'Generate Grid ✨',
@@ -609,7 +590,6 @@
         subtitle: '向世界傳達你所愛的{kind}。',
         creator_label: '創作者（推薦填寫）',
         creator_placeholder: '輸入你的暱稱',
-        hot_picks_label: '🔥 熱門推薦（點擊快速添加）',
         select: '選擇',
         btn_need_more: '還需選擇 {n} 部作品',
         btn_generate: '生成九宮格 ✨',
@@ -648,38 +628,6 @@
         og_desc: '選擇9部最能代表你的遊戲或動畫，生成精美九宮格卡片，和朋友一起分享！',
         page_title: '構成我的九部作品 | Powered by PixAI',
       }
-    };
-
-    // ===== HOT PICKS DATA (i18n) =====
-    const hotData = {
-      game: [
-        { ja:'原神', ko:'원신', en:'Genshin Impact', 'zh-TW':'原神', search:'原神' },
-        { ja:'ゼルダの伝説', ko:'젤다의 전설', en:'The Legend of Zelda', 'zh-TW':'薩爾達傳說', search:'ゼルダの伝説' },
-        { ja:'エルデンリング', ko:'엘든 링', en:'Elden Ring', 'zh-TW':'艾爾登法環', search:'エルデンリング' },
-        { ja:'SEKIRO', ko:'세키로', en:'Sekiro', 'zh-TW':'隻狼', search:'SEKIRO' },
-        { ja:'ペルソナ5', ko:'페르소나 5', en:'Persona 5', 'zh-TW':'女神異聞錄5', search:'ペルソナ5' },
-        { ja:'ホロウナイト', ko:'할로우 나이트', en:'Hollow Knight', 'zh-TW':'空洞騎士', search:'Hollow Knight' },
-        { ja:'スターデューバレー', ko:'스타듀 밸리', en:'Stardew Valley', 'zh-TW':'星露谷物語', search:'Stardew Valley' },
-        { ja:'FF7', ko:'파이널 판타지 7', en:'Final Fantasy VII', 'zh-TW':'最終幻想7', search:'Final Fantasy VII' },
-        { ja:'ウィッチャー3', ko:'위쳐 3', en:'The Witcher 3', 'zh-TW':'巫師3', search:'The Witcher 3' },
-        { ja:'あつまれ どうぶつの森', ko:'모여봐요 동물의 숲', en:'Animal Crossing', 'zh-TW':'動物森友會', search:'あつまれ どうぶつの森' },
-        { ja:'モンスターハンター', ko:'몬스터 헌터', en:'Monster Hunter', 'zh-TW':'魔物獵人', search:'モンスターハンター' },
-        { ja:'BG3', ko:'발더스 게이트 3', en:"Baldur's Gate 3", 'zh-TW':'柏德之門3', search:"Baldur's Gate 3" },
-      ],
-      anime: [
-        { ja:'進撃の巨人', ko:'진격의 거인', en:'Attack on Titan', 'zh-TW':'進擊的巨人', search:'進撃の巨人' },
-        { ja:'鬼滅の刃', ko:'귀멸의 칼날', en:'Demon Slayer', 'zh-TW':'鬼滅之刃', search:'鬼滅の刃' },
-        { ja:'SPY×FAMILY', ko:'스파이 패밀리', en:'SPY×FAMILY', 'zh-TW':'間諜家家酒', search:'SPY×FAMILY' },
-        { ja:'呪術廻戦', ko:'주술회전', en:'Jujutsu Kaisen', 'zh-TW':'咒術迴戰', search:'呪術廻戦' },
-        { ja:'葬送のフリーレン', ko:'장송의 프리렌', en:'Frieren', 'zh-TW':'葬送的芙莉蓮', search:'葬送のフリーレン' },
-        { ja:'ぼっち・ざ・ろっく！', ko:'봇치 더 록!', en:'Bocchi the Rock!', 'zh-TW':'孤獨搖滾', search:'ぼっち・ざ・ろっく！' },
-        { ja:'かぐや様は告らせたい', ko:'카구야님은 고백받고 싶어', en:'Kaguya-sama', 'zh-TW':'輝夜姬想讓人告白', search:'かぐや様は告らせたい' },
-        { ja:'鋼の錬金術師', ko:'강철의 연금술사', en:'Fullmetal Alchemist', 'zh-TW':'鋼之鍊金術師', search:'鋼の錬金術師' },
-        { ja:'STEINS;GATE', ko:'슈타인즈 게이트', en:'Steins;Gate', 'zh-TW':'命運石之門', search:'STEINS;GATE' },
-        { ja:'ヴァイオレット・エヴァーガーデン', ko:'바이올렛 에버가든', en:'Violet Evergarden', 'zh-TW':'紫羅蘭永恆花園', search:'ヴァイオレット・エヴァーガーデン' },
-        { ja:'CLANNAD', ko:'클라나드', en:'CLANNAD', 'zh-TW':'CLANNAD', search:'CLANNAD' },
-        { ja:'君の名は。', ko:'너의 이름은.', en:'Your Name', 'zh-TW':'你的名字', search:'君の名は。' },
-      ]
     };
 
     // ===== LANGUAGE DETECTION & STATE =====
@@ -755,7 +703,6 @@
       document.getElementById('mainSubtitle').textContent = t('subtitle', { kind: kind });
       document.getElementById('creatorLabel').textContent = t('creator_label');
       document.getElementById('creatorName').placeholder = t('creator_placeholder');
-      document.getElementById('hotPicksLabel').textContent = t('hot_picks_label');
 
       // Modal
       document.getElementById('modalSearchBtn').textContent = t('search_btn');
@@ -783,7 +730,6 @@
       // Dynamic content
       renderSlots();
       updateGenBtn();
-      renderHotPicks();
       updateSocialProof();
     }
 
@@ -803,7 +749,6 @@
       document.getElementById('mainSubtitle').textContent = t('subtitle', { kind: kindT() });
       renderSlots();
       updateGenBtn();
-      renderHotPicks();
     }
 
     // ===== SLOTS =====
@@ -830,7 +775,6 @@
       slots[i] = null;
       renderSlots();
       updateGenBtn();
-      renderHotPicks();
     }
 
     function updateGenBtn() {
@@ -947,7 +891,6 @@
       closeModal();
       renderSlots();
       updateGenBtn();
-      renderHotPicks();
     }
 
     // Auto-advance to next empty slot (only for manual search flow)
@@ -1173,7 +1116,7 @@
 
     function resetAll(){
       slots=Array(9).fill(null);
-      renderSlots();updateGenBtn();renderHotPicks();showPage('main');
+      renderSlots();updateGenBtn();showPage('main');
     }
 
     function showPage(id){
@@ -1195,51 +1138,6 @@
       const e=document.getElementById('toast');
       e.textContent=m;e.classList.add('show');
       setTimeout(()=>e.classList.remove('show'),2500);
-    }
-
-    // ===== HOT PICKS =====
-    function renderHotPicks() {
-      const list = document.getElementById('hotPicksList');
-      const picks = hotData[currentKind] || [];
-      const selectedTitles = slots.filter(Boolean).map(s => s.title);
-      list.innerHTML = picks.map(item => {
-        const displayName = item[currentLang] || item.en;
-        const added = selectedTitles.some(t =>
-          t.includes(item.search) || item.search.includes(t) ||
-          Object.values(item).some(v => typeof v === 'string' && (t.includes(v) || v.includes(t)))
-        );
-        return `<span class="hot-pick${added?' added':''}" data-search="${escapeHtml(item.search)}">${displayName}</span>`;
-      }).join('');
-      list.querySelectorAll('.hot-pick:not(.added)').forEach(el => {
-        el.addEventListener('click', () => quickAddPick(el.dataset.search));
-      });
-    }
-
-    let quickAddLock = false;
-    async function quickAddPick(searchKey) {
-      if (quickAddLock) return;
-      const targetSlot = slots.findIndex(s => !s);
-      if (targetSlot < 0) { showToast(t('toast_full')); return; }
-      quickAddLock = true;
-
-      try {
-        const type = currentKind === 'game' ? 4 : 2;
-        const resp = await fetch(`https://api.bgm.tv/search/subject/${encodeURIComponent(searchKey)}?type=${type}&responseGroup=small&max_results=5`);
-        const data = await resp.json();
-        const item = (data.list || []).find(i => i.images && i.images.common);
-        if (item) {
-          const title = item.name || item.name_cn;
-          const cover = (item.images.common || '').replace('http://','https://');
-          const coverLarge = (item.images.large || cover).replace('http://','https://');
-          selectResult(item.id, title, cover, coverLarge, targetSlot);
-        } else {
-          showToast(t('toast_not_found'));
-        }
-      } catch(e) {
-        showToast(t('toast_network_error'));
-      } finally {
-        quickAddLock = false;
-      }
     }
 
     // ===== SOCIAL PROOF =====
