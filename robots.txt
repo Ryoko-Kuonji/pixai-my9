@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://pixai-my9.pages.dev/sitemap.xml
+Sitemap: https://ryoko-kuonji.github.io/pixai-my9/sitemap.xml
