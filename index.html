@@ -1338,7 +1338,16 @@
       isSharedView = false;
       document.getElementById('makeMine').style.display = 'none';
       document.getElementById('btnReset').style.display = '';
-      resetAll();
+      // Reset kind to default and sync tab UI
+      currentKind = 'game';
+      document.querySelectorAll('.kind-tab').forEach(tab =>
+        tab.classList.toggle('active', tab.dataset.kind === 'game')
+      );
+      slots = Array(9).fill(null);
+      searchCache = {};
+      document.getElementById('creatorName').value = '';
+      applyLang();
+      showPage('main');
     }
 
     async function loadSharedResult() {
