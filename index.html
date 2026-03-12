@@ -348,12 +348,19 @@
       text-align:center;font-size:0.78rem;color:var(--text3);
       margin-top:12px;
     }
-    .trends-link{
-      display:inline-block;text-align:center;font-size:0.78rem;
-      color:var(--accent);text-decoration:none;margin-top:6px;
-      opacity:0.8;transition:opacity 0.2s;
+    .trends-banner{
+      display:flex;align-items:center;gap:12px;
+      width:100%;max-width:480px;margin-top:16px;padding:14px 18px;
+      background:var(--white);border:1px solid var(--border);border-radius:var(--radius);
+      box-shadow:var(--shadow);text-decoration:none;
+      transition:all 0.2s;cursor:pointer;
     }
-    .trends-link:hover{opacity:1;text-decoration:underline}
+    .trends-banner:hover{border-color:var(--accent);box-shadow:var(--shadow-lg);transform:translateY(-1px)}
+    .trends-banner-icon{font-size:1.5rem;flex-shrink:0}
+    .trends-banner-text{flex:1;min-width:0;display:flex;flex-direction:column}
+    .trends-banner-title{font-size:0.88rem;font-weight:700;color:var(--text)}
+    .trends-banner-desc{font-size:0.75rem;color:var(--text3);margin-top:3px}
+    .trends-banner-arrow{font-size:0.9rem;color:var(--text3);flex-shrink:0}
 
     /* Loading overlay */
     .loading-overlay{
@@ -425,7 +432,14 @@
 
     <button class="btn-generate-main fade-in fade-in-2" id="btnGenMain" disabled onclick="generateCard()"></button>
     <div class="social-proof fade-in fade-in-2" id="socialProof"></div>
-    <a href="trends.html" class="trends-link fade-in fade-in-2" id="trendsLink"></a>
+    <a href="trends.html" class="trends-banner fade-in fade-in-2" id="trendsBanner">
+      <span class="trends-banner-icon">🏆</span>
+      <span class="trends-banner-text">
+        <span class="trends-banner-title" id="trendsBannerTitle"></span>
+        <span class="trends-banner-desc" id="trendsBannerDesc"></span>
+      </span>
+      <span class="trends-banner-arrow">→</span>
+    </a>
   </div>
 
   <!-- ===== SEARCH MODAL ===== -->
@@ -527,7 +541,8 @@
         shared_viewing: '{creator} さんの九宮格',
         shared_viewing_anon: 'みんなの九宮格',
         back_home: '← ホームに戻る',
-        trends_link: '📊 みんなの構成を見る',
+        trends_title: 'みんなの構成ランキング',
+        trends_desc: 'コミュニティで人気の作品を見てみよう',
         card_title: '私を構成する9つの{kind}',
         og_title: '私を構成する9つの作品 — あなたの九宮格',
         og_desc: 'あなたを構成する9つのゲームやアニメを選んで、九宮格カードを作成して共有しよう！',
@@ -577,7 +592,8 @@
         shared_viewing: '{creator}님의 격자',
         shared_viewing_anon: '친구의 격자',
         back_home: '← 홈으로',
-        trends_link: '📊 모두의 구성 보기',
+        trends_title: '모두의 구성 랭킹',
+        trends_desc: '커뮤니티에서 인기 있는 작품을 확인하세요',
         card_title: '나를 구성하는 9개의 {kind}',
         og_title: '나를 구성하는 9개의 작품 — 나만의 격자',
         og_desc: '당신을 구성하는 9개의 게임이나 애니메이션을 선택하고, 격자 카드를 만들어 공유하세요!',
@@ -627,7 +643,8 @@
         shared_viewing: "{creator}'s Grid",
         shared_viewing_anon: "Someone's Grid",
         back_home: '← Home',
-        trends_link: '📊 View Trending Picks',
+        trends_title: 'Trending Picks',
+        trends_desc: 'See the most popular picks from the community',
         card_title: '9 {kind} That Define Me',
         og_title: '9 That Define Me — Your Grid',
         og_desc: 'Pick 9 games or anime that define you, generate a beautiful grid card, and share with friends!',
@@ -677,7 +694,8 @@
         shared_viewing: '{creator} 的九宮格',
         shared_viewing_anon: '好友的九宮格',
         back_home: '← 返回首頁',
-        trends_link: '📊 查看大家的構成',
+        trends_title: '大家的構成排名',
+        trends_desc: '看看社群中最受歡迎的作品',
         card_title: '構成我的九部{kind}',
         og_title: '構成我的九部作品 — 你的專屬九宮格',
         og_desc: '選擇9部最能代表你的遊戲或動畫，生成精美九宮格卡片，和朋友一起分享！',
@@ -792,8 +810,9 @@
       // Switcher
       renderLangSwitcher();
 
-      // Trends link
-      document.getElementById('trendsLink').textContent = t('trends_link');
+      // Trends banner
+      document.getElementById('trendsBannerTitle').textContent = t('trends_title');
+      document.getElementById('trendsBannerDesc').textContent = t('trends_desc');
 
       // Dynamic content
       renderSlots();
