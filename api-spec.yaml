@@ -1,0 +1,264 @@
+openapi: 3.0.3
+info:
+  title: My9 Backend API
+  description: |
+    Backend API for the "9 That Define Me" tool on pixai.art.
+
+    The frontend is currently 100% static (localStorage + seed data).
+    These 3 APIs enable real data collection & trending.
+
+    **Deployment**: These endpoints live under `https://pixai.art/api/my9/`
+  version: 1.0.0
+  contact:
+    name: PixAI Tools Team
+
+servers:
+  - url: https://pixai.art/api/my9
+    description: Production
+
+paths:
+  /picks:
+    post:
+      operationId: submitPicks
+      summary: Submit user's 9 picks after card generation
+      description: |
+        Called once per card generation. Stores the 9 Bangumi subject IDs
+        along with the kind (game/anime/manga/music) and optional creator name.
+
+        If the user is logged in (via PixAI auth), include user_id for
+        personalized recommendations in the future.
+
+        **Rate limit**: 10 req/min per IP to prevent abuse.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [kind, ids]
+              properties:
+                kind:
+                  type: string
+                  enum: [game, anime, manga, music]
+                  description: Content category
+                  example: game
+                ids:
+                  type: array
+                  items:
+                    type: integer
+                  minItems: 9
+                  maxItems: 9
+                  description: Nine Bangumi subject IDs
+                  example: [211005, 326025, 193356, 178790, 65767, 152573, 3042, 38844, 298122]
+                creator:
+                  type: string
+                  maxLength: 40
+                  description: Optional creator nickname
+                  example: "Ryoko"
+                user_id:
+                  type: string
+                  description: PixAI user ID (if logged in)
+                lang:
+                  type: string
+                  enum: [ja, ko, en, zh-TW]
+                  description: User's current language
+                  example: ja
+      responses:
+        '200':
+          description: Picks recorded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  total_generations:
+                    type: integer
+                    description: Updated global generation count
+                    example: 4521
+        '400':
+          description: Invalid request (wrong number of IDs, invalid kind, etc.)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          description: Rate limit exceeded
+
+  /trending:
+    get:
+      operationId: getTrending
+      summary: Get trending/popular picks for a given kind
+      description: |
+        Returns the top N most-picked subjects for a given kind,
+        with title metadata and pick counts.
+
+        **Cache**: Response should be cached server-side (e.g., 5 min TTL)
+        to reduce DB load.
+      parameters:
+        - name: kind
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [game, anime, manga, music]
+          example: anime
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+          description: Number of items to return
+        - name: lang
+          in: query
+          schema:
+            type: string
+            enum: [ja, ko, en, zh-TW]
+            default: ja
+          description: Preferred language for title resolution
+      responses:
+        '200':
+          description: Trending items
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  kind:
+                    type: string
+                    example: anime
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TrendingItem'
+                  updated_at:
+                    type: string
+                    format: date-time
+                    description: When the data was last refreshed
+              example:
+                kind: anime
+                items:
+                  - id: 265
+                    title: "新世紀エヴァンゲリオン"
+                    title_cn: "新世纪福音战士"
+                    cover: "https://lain.bgm.tv/pic/cover/l/xx/xx/265.jpg"
+                    count: 1523
+                  - id: 74981
+                    title: "進撃の巨人"
+                    title_cn: "进击的巨人"
+                    cover: "https://lain.bgm.tv/pic/cover/l/xx/xx/74981.jpg"
+                    count: 1278
+                updated_at: "2026-03-12T10:30:00Z"
+
+  /count:
+    get:
+      operationId: getGenerationCount
+      summary: Get total generation count (for social proof)
+      description: |
+        Returns the total number of grid generations across all users.
+        Used for the social proof counter on the main page.
+
+        **Cache**: Highly cacheable. 1 min TTL is fine.
+      responses:
+        '200':
+          description: Total count
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    description: Total grid generations
+                    example: 4521
+                  count_today:
+                    type: integer
+                    description: Generations today (for momentum display)
+                    example: 87
+
+components:
+  schemas:
+    TrendingItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Bangumi subject ID
+          example: 265
+        title:
+          type: string
+          description: Title in original language (usually Japanese)
+          example: "新世紀エヴァンゲリオン"
+        title_cn:
+          type: string
+          description: Chinese title (from Bangumi)
+          example: "新世纪福音战士"
+        cover:
+          type: string
+          format: uri
+          description: Cover image URL (from Bangumi, may need CORS proxy)
+          example: "https://lain.bgm.tv/pic/cover/l/xx/xx/265.jpg"
+        count:
+          type: integer
+          description: Number of times this subject was picked
+          example: 1523
+
+    Error:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: "Invalid kind parameter"
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: |
+        Optional PixAI auth token. If provided, picks are linked to the user
+        for future recommendations. Not required for anonymous usage.
+
+# Notes for backend team:
+#
+# Database schema suggestion (PostgreSQL):
+#
+# CREATE TABLE my9_picks (
+#   id BIGSERIAL PRIMARY KEY,
+#   kind VARCHAR(8) NOT NULL,        -- game/anime/manga/music
+#   ids INTEGER[] NOT NULL,           -- 9 Bangumi subject IDs
+#   creator VARCHAR(40),              -- optional nickname
+#   user_id VARCHAR(64),              -- optional PixAI user ID
+#   lang VARCHAR(8),                  -- ja/ko/en/zh-TW
+#   ip_hash VARCHAR(64),              -- hashed IP for rate limiting
+#   created_at TIMESTAMPTZ DEFAULT NOW()
+# );
+#
+# CREATE TABLE my9_subject_cache (
+#   bgm_id INTEGER PRIMARY KEY,
+#   title TEXT NOT NULL,
+#   title_cn TEXT,
+#   cover_url TEXT,
+#   fetched_at TIMESTAMPTZ DEFAULT NOW()
+# );
+#
+# -- Materialized view for trending (refresh every 5 min)
+# CREATE MATERIALIZED VIEW my9_trending AS
+# SELECT
+#   kind,
+#   unnest(ids) AS bgm_id,
+#   COUNT(*) AS pick_count
+# FROM my9_picks
+# GROUP BY kind, bgm_id
+# ORDER BY kind, pick_count DESC;
+#
+# Redis keys:
+# - my9:count        → total generation count (INCR on each POST /picks)
+# - my9:count:today  → daily count (INCR + EXPIRE midnight)
+# - my9:trending:{kind} → cached JSON, 5 min TTL

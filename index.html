@@ -1204,9 +1204,39 @@
       setTimeout(()=>e.classList.remove('show'),2500);
     }
 
+    // ===== API CONFIG =====
+    // Set API_BASE to enable backend mode. When null, falls back to localStorage.
+    // Example: const API_BASE = 'https://pixai.art/api/my9';
+    const API_BASE = null;
+
+    // Probe backend availability (runs once on load)
+    let backendAvailable = false;
+    async function probeBackend() {
+      if (!API_BASE) return;
+      try {
+        const resp = await fetch(`${API_BASE}/count`, { signal: AbortSignal.timeout(3000) });
+        if (resp.ok) {
+          backendAvailable = true;
+          const data = await resp.json();
+          if (data.count) {
+            cachedServerCount = data.count;
+            updateSocialProof();
+          }
+        }
+      } catch(e) { backendAvailable = false; }
+    }
+    probeBackend();
+
     // ===== SOCIAL PROOF =====
+    let cachedServerCount = null;
+
     function getGenCount() {
-      // Date-based growth: starts at ~3000 on Mar 1 2026, grows ~80/day deterministically
+      // If backend returned a count, use it + local bumps since page load
+      if (cachedServerCount !== null) {
+        const sessionBumps = parseInt(sessionStorage.getItem('my9_session_bumps') || '0');
+        return cachedServerCount + sessionBumps;
+      }
+      // Fallback: Date-based growth formula (static site mode)
       const baseDate = new Date('2026-03-01T00:00:00').getTime();
       const now = Date.now();
       const days = Math.max(0, Math.floor((now - baseDate) / 86400000));
@@ -1217,17 +1247,27 @@
       const local = parseInt(localStorage.getItem('my9_gen_local') || '0');
       return total + local;
     }
+
     function bumpGenCount() {
-      let c = parseInt(localStorage.getItem('my9_gen_local') || '0');
-      localStorage.setItem('my9_gen_local', String(c + 1));
+      if (cachedServerCount !== null) {
+        // Backend mode: just bump session counter (server incremented via POST /picks)
+        let s = parseInt(sessionStorage.getItem('my9_session_bumps') || '0');
+        sessionStorage.setItem('my9_session_bumps', String(s + 1));
+      } else {
+        // Fallback: localStorage
+        let c = parseInt(localStorage.getItem('my9_gen_local') || '0');
+        localStorage.setItem('my9_gen_local', String(c + 1));
+      }
       updateSocialProof();
     }
+
     function updateSocialProof() {
       document.getElementById('socialProof').textContent = t('social_proof', { n: getGenCount().toLocaleString() });
     }
 
     // ===== PICK TRACKING =====
     function savePicks() {
+      // Always save to localStorage (works offline, and for trends page seed)
       const data = JSON.parse(localStorage.getItem('my9_picks') || '{}');
       if (!data[currentKind]) data[currentKind] = {};
       slots.filter(Boolean).forEach(s => {
@@ -1240,6 +1280,27 @@
         data[currentKind][key].cover = s.cover;
       });
       localStorage.setItem('my9_picks', JSON.stringify(data));
+
+      // If backend available, also POST to server
+      if (backendAvailable && API_BASE) {
+        const ids = slots.filter(Boolean).map(s => s.id);
+        const creator = document.getElementById('creatorName').value.trim();
+        fetch(`${API_BASE}/picks`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            kind: currentKind,
+            ids,
+            creator: creator || undefined,
+            lang: currentLang
+          })
+        }).then(r => r.json()).then(d => {
+          if (d.total_generations) {
+            cachedServerCount = d.total_generations;
+            updateSocialProof();
+          }
+        }).catch(() => {}); // silently fail
+      }
     }
 
     // ===== SHARE LINK =====

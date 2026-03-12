@@ -318,6 +318,11 @@
       ],
     };
 
+    // ===== API CONFIG (must match index.html) =====
+    const API_BASE = null; // e.g., 'https://pixai.art/api/my9'
+    let backendAvailable = false;
+    let backendTrending = {}; // { game: [...], anime: [...], ... }
+
     // Cover cache
     const coverCache = JSON.parse(localStorage.getItem('my9_cover_cache') || '{}');
 
@@ -373,12 +378,25 @@
         btn.addEventListener('click', () => {
           currentKind = btn.dataset.kind;
           render();
+          // If backend is available but we haven't fetched this kind yet, fetch it
+          if (API_BASE && !backendTrending[currentKind]) {
+            loadFromBackend();
+          }
         });
       });
     }
 
     // ===== DATA MERGE =====
     function getRankData() {
+      // If backend data is available for this kind, use it directly
+      if (backendAvailable && backendTrending[currentKind]) {
+        return backendTrending[currentKind].map(item => ({
+          ...item,
+          cover: item.cover || coverCache[item.id] || ''
+        }));
+      }
+
+      // Fallback: seed data + localStorage
       const merged = {};
       (SEED[currentKind] || []).forEach(item => {
         const key = item.id ? String(item.id) : item.title;
@@ -517,8 +535,26 @@
       return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
+    // ===== BACKEND PROBE =====
+    async function loadFromBackend() {
+      if (!API_BASE) return;
+      try {
+        const resp = await fetch(`${API_BASE}/trending?kind=${currentKind}&lang=${currentLang}`, {
+          signal: AbortSignal.timeout(3000)
+        });
+        if (!resp.ok) return;
+        const data = await resp.json();
+        if (data.items && data.items.length) {
+          backendAvailable = true;
+          backendTrending[data.kind || currentKind] = data.items;
+          render(); // re-render with real data
+        }
+      } catch(e) { /* fallback to seed data */ }
+    }
+
     // ===== INIT =====
     render();
+    loadFromBackend();
   </script>
 </body>
 </html>
