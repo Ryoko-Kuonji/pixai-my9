@@ -8,20 +8,20 @@
   <meta name="keywords" content="anime grid, game grid, 9 that define me, my 9, anime list, game list, shareable card, PixAI">
   <meta name="author" content="PixAI">
   <meta name="robots" content="index, follow">
-  <link rel="canonical" id="canonical" href="https://ryoko-kuonji.github.io/pixai-my9/">
+  <link rel="canonical" id="canonical" href="https://pixai.art/tools/my9/">
 
   <!-- Hreflang for multi-language SEO -->
-  <link rel="alternate" hreflang="en" href="https://ryoko-kuonji.github.io/pixai-my9/?lang=en">
-  <link rel="alternate" hreflang="ja" href="https://ryoko-kuonji.github.io/pixai-my9/?lang=ja">
-  <link rel="alternate" hreflang="ko" href="https://ryoko-kuonji.github.io/pixai-my9/?lang=ko">
-  <link rel="alternate" hreflang="zh-Hant-TW" href="https://ryoko-kuonji.github.io/pixai-my9/?lang=zh-TW">
-  <link rel="alternate" hreflang="x-default" href="https://ryoko-kuonji.github.io/pixai-my9/">
+  <link rel="alternate" hreflang="en" href="https://pixai.art/tools/my9/?lang=en">
+  <link rel="alternate" hreflang="ja" href="https://pixai.art/tools/my9/?lang=ja">
+  <link rel="alternate" hreflang="ko" href="https://pixai.art/tools/my9/?lang=ko">
+  <link rel="alternate" hreflang="zh-Hant-TW" href="https://pixai.art/tools/my9/?lang=zh-TW">
+  <link rel="alternate" hreflang="x-default" href="https://pixai.art/tools/my9/">
 
   <!-- Open Graph -->
   <meta property="og:title" id="ogTitle" content="9 That Define Me — Create Your Anime & Game Grid">
   <meta property="og:description" id="ogDesc" content="Pick 9 games or anime that define you, generate a beautiful shareable grid card!">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://ryoko-kuonji.github.io/pixai-my9/">
+  <meta property="og:url" content="https://pixai.art/tools/my9/">
   <meta property="og:image" content="https://pixai.art/og-my9.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -52,7 +52,7 @@
     "@type": "WebApplication",
     "name": "My9 — 9 That Define Me",
     "description": "Pick 9 games or anime that define you, generate a beautiful shareable 3x3 grid card.",
-    "url": "https://ryoko-kuonji.github.io/pixai-my9/",
+    "url": "https://pixai.art/tools/my9/",
     "applicationCategory": "Entertainment",
     "operatingSystem": "Web",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
@@ -297,6 +297,8 @@
     .btn-save:hover{background:var(--accent-dark)}
     .btn-share{background:var(--surface);color:var(--text);border:1.5px solid var(--border)}
     .btn-share:hover{border-color:var(--accent);color:var(--accent)}
+    .btn-x{background:#000;color:#fff;border:none}
+    .btn-x:hover{background:#333}
     .btn-reset{background:transparent;color:var(--text2);border:1.5px solid var(--border)}
     .btn-reset:hover{color:var(--text);border-color:var(--text3)}
 
@@ -346,6 +348,12 @@
       text-align:center;font-size:0.78rem;color:var(--text3);
       margin-top:12px;
     }
+    .trends-link{
+      display:inline-block;text-align:center;font-size:0.78rem;
+      color:var(--accent);text-decoration:none;margin-top:6px;
+      opacity:0.8;transition:opacity 0.2s;
+    }
+    .trends-link:hover{opacity:1;text-decoration:underline}
 
     /* Loading overlay */
     .loading-overlay{
@@ -401,6 +409,8 @@
       <div class="kind-tabs" id="kindTabs">
         <button class="kind-tab active" data-kind="game" onclick="setKind('game')"><span id="tabGame"></span></button>
         <button class="kind-tab" data-kind="anime" onclick="setKind('anime')"><span id="tabAnime"></span></button>
+        <button class="kind-tab" data-kind="manga" onclick="setKind('manga')"><span id="tabManga"></span></button>
+        <button class="kind-tab" data-kind="music" onclick="setKind('music')"><span id="tabMusic"></span></button>
       </div>
       <div class="subtitle" id="mainSubtitle"></div>
     </div>
@@ -415,6 +425,7 @@
 
     <button class="btn-generate-main fade-in fade-in-2" id="btnGenMain" disabled onclick="generateCard()"></button>
     <div class="social-proof fade-in fade-in-2" id="socialProof"></div>
+    <a href="trends.html" class="trends-link fade-in fade-in-2" id="trendsLink"></a>
   </div>
 
   <!-- ===== SEARCH MODAL ===== -->
@@ -449,6 +460,7 @@
     <div class="action-buttons fade-in fade-in-1">
       <button class="btn-action btn-save" onclick="saveCard()" id="btnSave"></button>
       <button class="btn-action btn-share" onclick="shareLink()" id="btnShareLink"></button>
+      <button class="btn-action btn-x" onclick="shareToX()" id="btnShareX">𝕏 Post</button>
       <button class="btn-action btn-reset" onclick="resetAll()" id="btnReset"></button>
     </div>
     <div class="make-mine-cta fade-in fade-in-1" id="makeMine" style="display:none">
@@ -473,8 +485,8 @@
     const I18N = {
       ja: {
         title: '私を構成する9つの{kind}',
-        kind_game: 'ゲーム', kind_anime: 'アニメ',
-        tab_game: '🎮 ゲーム', tab_anime: '📺 アニメ',
+        kind_game: 'ゲーム', kind_anime: 'アニメ', kind_manga: 'マンガ', kind_music: '音楽',
+        tab_game: '🎮 ゲーム', tab_anime: '📺 アニメ', tab_manga: '📖 マンガ', tab_music: '🎵 音楽',
         subtitle: '世界に伝えよう、あなたの愛する{kind}を。',
         creator_label: 'クリエイター（任意）',
         creator_placeholder: 'ニックネームを入力',
@@ -508,11 +520,14 @@
         confirm_switch: '切り替えると選択済みの {n} 作品がクリアされます。よろしいですか？',
         qr_text: 'スキャンして九宮格を見る',
         btn_share_link: '🔗 リンクをシェア',
+        btn_share_x: '𝕏 ポスト',
+        x_share_text: '私を構成する9つの{kind}！\nあなたも作ろう → {url}\n#私を構成する9つの作品 #PixAI',
         toast_link_copied: 'リンクをコピーしました！',
         btn_make_mine: '🎮 自分のも作る！',
         shared_viewing: '{creator} さんの九宮格',
         shared_viewing_anon: 'みんなの九宮格',
         back_home: '← ホームに戻る',
+        trends_link: '📊 みんなの構成を見る',
         card_title: '私を構成する9つの{kind}',
         og_title: '私を構成する9つの作品 — あなたの九宮格',
         og_desc: 'あなたを構成する9つのゲームやアニメを選んで、九宮格カードを作成して共有しよう！',
@@ -520,8 +535,8 @@
       },
       ko: {
         title: '나를 구성하는 9개의 {kind}',
-        kind_game: '게임', kind_anime: '애니메이션',
-        tab_game: '🎮 게임', tab_anime: '📺 애니',
+        kind_game: '게임', kind_anime: '애니메이션', kind_manga: '만화', kind_music: '음악',
+        tab_game: '🎮 게임', tab_anime: '📺 애니', tab_manga: '📖 만화', tab_music: '🎵 음악',
         subtitle: '세상에 전하세요, 당신이 사랑하는 {kind}을.',
         creator_label: '제작자 (선택)',
         creator_placeholder: '닉네임 입력',
@@ -555,11 +570,14 @@
         confirm_switch: '전환하면 선택한 {n}개 작품이 초기화됩니다. 계속하시겠습니까?',
         qr_text: 'QR 스캔하여 격자 보기',
         btn_share_link: '🔗 링크 공유',
+        btn_share_x: '𝕏 포스트',
+        x_share_text: '나를 구성하는 9개의 {kind}!\n나도 만들어 보세요 → {url}\n#나를구성하는9개의작품 #PixAI',
         toast_link_copied: '링크 복사됨!',
         btn_make_mine: '🎮 나도 만들기!',
         shared_viewing: '{creator}님의 격자',
         shared_viewing_anon: '친구의 격자',
         back_home: '← 홈으로',
+        trends_link: '📊 모두의 구성 보기',
         card_title: '나를 구성하는 9개의 {kind}',
         og_title: '나를 구성하는 9개의 작품 — 나만의 격자',
         og_desc: '당신을 구성하는 9개의 게임이나 애니메이션을 선택하고, 격자 카드를 만들어 공유하세요!',
@@ -567,8 +585,8 @@
       },
       en: {
         title: '9 {kind} That Define Me',
-        kind_game: 'Games', kind_anime: 'Anime',
-        tab_game: '🎮 Games', tab_anime: '📺 Anime',
+        kind_game: 'Games', kind_anime: 'Anime', kind_manga: 'Manga', kind_music: 'Music',
+        tab_game: '🎮 Games', tab_anime: '📺 Anime', tab_manga: '📖 Manga', tab_music: '🎵 Music',
         subtitle: 'Share your favorite {kind} with the world.',
         creator_label: 'Creator (optional)',
         creator_placeholder: 'Enter your nickname',
@@ -602,11 +620,14 @@
         confirm_switch: 'Switching will clear your {n} selected works. Continue?',
         qr_text: 'Scan to view this grid',
         btn_share_link: '🔗 Share Link',
+        btn_share_x: '𝕏 Post',
+        x_share_text: '9 {kind} That Define Me!\nCreate yours → {url}\n#9ThatDefineMe #PixAI',
         toast_link_copied: 'Link copied!',
         btn_make_mine: '🎮 Make My Own!',
         shared_viewing: "{creator}'s Grid",
         shared_viewing_anon: "Someone's Grid",
         back_home: '← Home',
+        trends_link: '📊 View Trending Picks',
         card_title: '9 {kind} That Define Me',
         og_title: '9 That Define Me — Your Grid',
         og_desc: 'Pick 9 games or anime that define you, generate a beautiful grid card, and share with friends!',
@@ -614,8 +635,8 @@
       },
       'zh-TW': {
         title: '構成我的九部{kind}',
-        kind_game: '遊戲', kind_anime: '動畫',
-        tab_game: '🎮 遊戲', tab_anime: '📺 動畫',
+        kind_game: '遊戲', kind_anime: '動畫', kind_manga: '漫畫', kind_music: '音樂',
+        tab_game: '🎮 遊戲', tab_anime: '📺 動畫', tab_manga: '📖 漫畫', tab_music: '🎵 音樂',
         subtitle: '向世界傳達你所愛的{kind}。',
         creator_label: '創作者（推薦填寫）',
         creator_placeholder: '輸入你的暱稱',
@@ -649,11 +670,14 @@
         confirm_switch: '切換將清空已選的 {n} 部作品，確定嗎？',
         qr_text: '掃碼查看這份九宮格',
         btn_share_link: '🔗 分享連結',
+        btn_share_x: '𝕏 發文',
+        x_share_text: '構成我的九部{kind}！\n你也來做一個吧 → {url}\n#構成我的九部作品 #PixAI',
         toast_link_copied: '連結已複製！',
         btn_make_mine: '🎮 我也來做一個！',
         shared_viewing: '{creator} 的九宮格',
         shared_viewing_anon: '好友的九宮格',
         back_home: '← 返回首頁',
+        trends_link: '📊 查看大家的構成',
         card_title: '構成我的九部{kind}',
         og_title: '構成我的九部作品 — 你的專屬九宮格',
         og_desc: '選擇9部最能代表你的遊戲或動畫，生成精美九宮格卡片，和朋友一起分享！',
@@ -691,8 +715,11 @@
     }
 
     function kindT() {
-      return currentKind === 'game' ? t('kind_game') : t('kind_anime');
+      return t('kind_' + currentKind);
     }
+
+    // Bangumi API type mapping: 1=book, 2=anime, 3=music, 4=game, 6=real
+    const BGM_TYPE = { game: 4, anime: 2, manga: 1, music: 3 };
 
     // ===== STATE =====
     let currentKind = 'game';
@@ -733,6 +760,8 @@
       document.getElementById('mainTitle').textContent = t('title', { kind: kind });
       document.getElementById('tabGame').textContent = t('tab_game');
       document.getElementById('tabAnime').textContent = t('tab_anime');
+      document.getElementById('tabManga').textContent = t('tab_manga');
+      document.getElementById('tabMusic').textContent = t('tab_music');
       document.getElementById('mainSubtitle').textContent = t('subtitle', { kind: kind });
       document.getElementById('creatorLabel').textContent = t('creator_label');
       document.getElementById('creatorName').placeholder = t('creator_placeholder');
@@ -746,6 +775,7 @@
       document.getElementById('resultSubtitle').textContent = t('result_subtitle');
       document.getElementById('btnSave').textContent = t('btn_save');
       document.getElementById('btnShareLink').textContent = t('btn_share_link');
+      document.getElementById('btnShareX').textContent = t('btn_share_x');
       document.getElementById('btnReset').textContent = t('btn_reset');
       document.getElementById('backHomeLink').textContent = t('back_home');
       document.getElementById('btnMakeMine').textContent = t('btn_make_mine');
@@ -761,6 +791,9 @@
 
       // Switcher
       renderLangSwitcher();
+
+      // Trends link
+      document.getElementById('trendsLink').textContent = t('trends_link');
 
       // Dynamic content
       renderSlots();
@@ -856,7 +889,7 @@
       }
 
       try {
-        const type = currentKind === 'game' ? 4 : 2;
+        const type = BGM_TYPE[currentKind] || 2;
         const resp = await fetch(`https://api.bgm.tv/search/subject/${encodeURIComponent(q)}?type=${type}&responseGroup=small&max_results=20`);
         if (!resp.ok) throw new Error('API error');
         const data = await resp.json();
@@ -941,6 +974,7 @@
       if (slots.filter(Boolean).length < 9) return;
       document.getElementById('loadingOverlay').classList.add('show');
       bumpGenCount();
+      savePicks();
       showPage('result');
       loadImagesAndDraw();
     }
@@ -1153,17 +1187,40 @@
 
     // ===== SOCIAL PROOF =====
     function getGenCount() {
-      let c = parseInt(localStorage.getItem('my9_gen_count') || '0');
-      if (!c) { c = 2847 + Math.floor(Math.random()*500); localStorage.setItem('my9_gen_count', c); }
-      return c;
+      // Date-based growth: starts at ~3000 on Mar 1 2026, grows ~80/day deterministically
+      const baseDate = new Date('2026-03-01T00:00:00').getTime();
+      const now = Date.now();
+      const days = Math.max(0, Math.floor((now - baseDate) / 86400000));
+      let total = 3000;
+      for (let d = 0; d < days; d++) {
+        total += 50 + ((d * 137 + 42) % 100); // 50-149 per day, deterministic
+      }
+      const local = parseInt(localStorage.getItem('my9_gen_local') || '0');
+      return total + local;
     }
     function bumpGenCount() {
-      let c = getGenCount() + 1;
-      localStorage.setItem('my9_gen_count', c);
+      let c = parseInt(localStorage.getItem('my9_gen_local') || '0');
+      localStorage.setItem('my9_gen_local', String(c + 1));
       updateSocialProof();
     }
     function updateSocialProof() {
       document.getElementById('socialProof').textContent = t('social_proof', { n: getGenCount().toLocaleString() });
+    }
+
+    // ===== PICK TRACKING =====
+    function savePicks() {
+      const data = JSON.parse(localStorage.getItem('my9_picks') || '{}');
+      if (!data[currentKind]) data[currentKind] = {};
+      slots.filter(Boolean).forEach(s => {
+        const key = String(s.id);
+        if (!data[currentKind][key]) {
+          data[currentKind][key] = { title: s.title, cover: s.cover, count: 0 };
+        }
+        data[currentKind][key].count++;
+        data[currentKind][key].title = s.title;
+        data[currentKind][key].cover = s.cover;
+      });
+      localStorage.setItem('my9_picks', JSON.stringify(data));
     }
 
     // ===== SHARE LINK =====
@@ -1188,6 +1245,12 @@
         document.body.appendChild(ta); ta.select(); document.execCommand('copy');
         document.body.removeChild(ta); showToast(t('toast_link_copied'));
       });
+    }
+
+    function shareToX() {
+      const url = buildShareUrl();
+      const text = t('x_share_text', { kind: kindT(), url });
+      window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank');
     }
 
     function goHome() {

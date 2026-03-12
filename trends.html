@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Trending Picks | My9 — Powered by PixAI</title>
+  <meta name="description" content="See the most popular anime, game, manga and music picks from the My9 community.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://pixai.art/tools/my9/trends.html">
+  <meta property="og:title" content="Trending Picks — My9">
+  <meta property="og:description" content="See the most popular anime, game, manga and music picks from the community.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://pixai.art/tools/my9/trends.html">
+  <meta property="og:image" content="https://pixai.art/og-my9.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#e85d75">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --bg:#faf7f5;--white:#fff;--surface:#f3efed;
+      --border:#e8e0dc;--border2:#d5ccc7;
+      --text:#2c2420;--text2:#7a6e66;--text3:#b0a49c;
+      --accent:#e85d75;--accent-light:#fce8ec;--accent-dark:#d14a62;
+      --radius:12px;--radius-lg:16px;
+      --shadow:0 1px 8px rgba(44,36,32,0.06);
+      --shadow-lg:0 4px 24px rgba(44,36,32,0.1);
+    }
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","PingFang TC","Noto Sans JP","Noto Sans KR","Microsoft JhengHei","Noto Sans TC",sans-serif;
+      background:var(--bg);color:var(--text);min-height:100vh;
+      -webkit-font-smoothing:antialiased;
+    }
+    .container{
+      max-width:640px;margin:0 auto;padding:20px 16px 40px;
+      display:flex;flex-direction:column;align-items:center;
+    }
+
+    /* Top bar */
+    .top-bar{
+      display:flex;align-items:center;justify-content:center;gap:12px;
+      flex-wrap:wrap;margin-bottom:20px;width:100%;
+    }
+    .powered-by{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:6px 14px;border:1px solid var(--border);border-radius:20px;
+      background:var(--white);font-size:0.78rem;color:var(--text3);
+      box-shadow:var(--shadow);text-decoration:none;transition:all 0.2s;
+    }
+    .powered-by:hover{border-color:var(--accent);color:var(--text2)}
+    .powered-by b{color:var(--accent);font-weight:700}
+    .lang-switcher{
+      display:inline-flex;background:var(--surface);border-radius:8px;
+      padding:2px;gap:1px;
+    }
+    .lang-btn{
+      padding:4px 10px;border-radius:6px;border:none;
+      background:none;font-size:0.75rem;color:var(--text3);
+      cursor:pointer;transition:all 0.2s;
+    }
+    .lang-btn.active{background:var(--white);color:var(--text);box-shadow:var(--shadow)}
+
+    /* Header */
+    .header{text-align:center;margin-bottom:8px}
+    .header h1{font-size:1.5rem;font-weight:800;color:var(--text);margin-bottom:4px}
+    .header .subtitle{font-size:0.85rem;color:var(--text2)}
+    .back-link{
+      font-size:0.82rem;color:var(--accent);text-decoration:none;
+      margin-bottom:16px;opacity:0.8;transition:opacity 0.2s;
+    }
+    .back-link:hover{opacity:1;text-decoration:underline}
+
+    /* Kind tabs */
+    .kind-tabs{
+      display:flex;gap:6px;justify-content:center;
+      margin:16px 0 20px;flex-wrap:wrap;
+    }
+    .kind-tab{
+      padding:8px 16px;border-radius:20px;border:1px solid var(--border);
+      background:var(--white);font-size:0.82rem;color:var(--text2);
+      cursor:pointer;transition:all 0.2s;
+    }
+    .kind-tab:hover{border-color:var(--accent);color:var(--accent)}
+    .kind-tab.active{
+      background:var(--accent);color:var(--white);border-color:var(--accent);
+    }
+
+    /* Ranking list */
+    .ranking-list{width:100%;margin-top:8px}
+    .rank-item{
+      display:flex;align-items:center;gap:12px;
+      padding:12px 16px;background:var(--white);
+      border-radius:var(--radius);margin-bottom:8px;
+      box-shadow:var(--shadow);transition:transform 0.15s;
+    }
+    .rank-item:hover{transform:translateX(4px)}
+    .rank-num{
+      font-size:1.1rem;font-weight:800;color:var(--text3);
+      min-width:28px;text-align:center;
+    }
+    .rank-num.top-1{color:#FFD700;font-size:1.3rem}
+    .rank-num.top-2{color:#C0C0C0;font-size:1.2rem}
+    .rank-num.top-3{color:#CD7F32;font-size:1.15rem}
+    .rank-cover{
+      width:48px;height:64px;border-radius:8px;
+      background:var(--surface);flex-shrink:0;
+      overflow:hidden;position:relative;
+    }
+    .rank-cover img{
+      width:100%;height:100%;object-fit:cover;
+      display:block;
+    }
+    .rank-cover-init{
+      width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+      font-size:1.1rem;font-weight:700;color:var(--white);
+    }
+    .rank-info{flex:1;min-width:0}
+    .rank-title{
+      font-size:0.9rem;font-weight:600;color:var(--text);
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    .rank-bar-wrap{
+      margin-top:6px;height:6px;background:var(--surface);
+      border-radius:3px;overflow:hidden;
+    }
+    .rank-bar{
+      height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-dark));
+      border-radius:3px;transition:width 0.6s ease-out;
+    }
+    .rank-count{
+      font-size:0.72rem;color:var(--text3);margin-top:3px;
+    }
+
+    /* Empty state */
+    .empty-state{
+      text-align:center;padding:60px 20px;color:var(--text3);
+    }
+    .empty-state .emoji{font-size:3rem;margin-bottom:12px}
+    .empty-state p{font-size:0.9rem;margin-bottom:16px}
+
+    /* CTA */
+    .cta-bottom{
+      margin-top:32px;text-align:center;width:100%;
+    }
+    .btn-make{
+      display:inline-block;padding:14px 32px;
+      background:var(--accent);color:var(--white);
+      border:none;border-radius:var(--radius-lg);
+      font-size:1rem;font-weight:700;cursor:pointer;
+      text-decoration:none;box-shadow:var(--shadow-lg);
+      transition:all 0.2s;
+    }
+    .btn-make:hover{background:var(--accent-dark);transform:translateY(-1px)}
+
+    /* Fade in */
+    .fade-in{opacity:0;transform:translateY(12px);animation:fadeIn 0.5s ease forwards}
+    .fade-in-1{animation-delay:0.1s}
+    .fade-in-2{animation-delay:0.2s}
+    .fade-in-3{animation-delay:0.3s}
+    @keyframes fadeIn{to{opacity:1;transform:translateY(0)}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top-bar fade-in">
+      <a href="https://pixai.art?utm_source=my9trends&utm_medium=badge" target="_blank" class="powered-by">
+        Powered by <b>PixAI</b>
+      </a>
+      <div class="lang-switcher" id="langSwitcher"></div>
+    </div>
+
+    <a href="index.html" class="back-link fade-in" id="backLink"></a>
+
+    <div class="header fade-in">
+      <h1 id="trendTitle"></h1>
+      <div class="subtitle" id="trendSubtitle"></div>
+    </div>
+
+    <div class="kind-tabs fade-in fade-in-1" id="kindTabs"></div>
+
+    <div class="ranking-list fade-in fade-in-2" id="rankList"></div>
+
+    <div class="cta-bottom fade-in fade-in-3">
+      <a href="index.html" class="btn-make" id="ctaMake"></a>
+    </div>
+  </div>
+
+  <script>
+    // ===== I18N =====
+    const I18N = {
+      ja: {
+        trend_title: 'みんなの構成',
+        trend_subtitle: 'コミュニティで人気の作品ランキング',
+        back: '← 九宮格を作る',
+        tab_game: '🎮 ゲーム', tab_anime: '📺 アニメ', tab_manga: '📖 マンガ', tab_music: '🎵 音楽',
+        picks: '{n} 人が選択',
+        empty_title: 'まだデータがありません',
+        empty_desc: '最初の九宮格を作ってランキングに参加しよう！',
+        cta: '🎮 自分の九宮格を作る →',
+      },
+      ko: {
+        trend_title: '모두의 구성',
+        trend_subtitle: '커뮤니티에서 인기 있는 작품 순위',
+        back: '← 격자 만들기',
+        tab_game: '🎮 게임', tab_anime: '📺 애니', tab_manga: '📖 만화', tab_music: '🎵 음악',
+        picks: '{n}명 선택',
+        empty_title: '아직 데이터가 없습니다',
+        empty_desc: '첫 격자를 만들어 순위에 참여하세요!',
+        cta: '🎮 나만의 격자 만들기 →',
+      },
+      en: {
+        trend_title: 'Trending Picks',
+        trend_subtitle: 'Most popular picks from the community',
+        back: '← Create Your Grid',
+        tab_game: '🎮 Games', tab_anime: '📺 Anime', tab_manga: '📖 Manga', tab_music: '🎵 Music',
+        picks: '{n} picks',
+        empty_title: 'No data yet',
+        empty_desc: 'Create your first grid to join the rankings!',
+        cta: '🎮 Create Your Grid →',
+      },
+      'zh-TW': {
+        trend_title: '大家的構成',
+        trend_subtitle: '社群中最受歡迎的作品排名',
+        back: '← 製作九宮格',
+        tab_game: '🎮 遊戲', tab_anime: '📺 動畫', tab_manga: '📖 漫畫', tab_music: '🎵 音樂',
+        picks: '{n} 人選擇',
+        empty_title: '暫無資料',
+        empty_desc: '製作你的第一個九宮格來加入排名吧！',
+        cta: '🎮 製作你的九宮格 →',
+      }
+    };
+
+    // ===== SEED DATA =====
+    // Popular titles with Bangumi subject IDs and synthetic counts
+    const SEED = {
+      game: [
+        { id: 211005, title: 'ゼルダの伝説 ブレス オブ ザ ワイルド', count: 487 },
+        { id: 326025, title: 'ELDEN RING', count: 412 },
+        { id: 193356, title: 'NieR:Automata', count: 389 },
+        { id: 178790, title: 'ペルソナ5', count: 356 },
+        { id: 65767, title: 'ウィッチャー3 ワイルドハント', count: 334 },
+        { id: 152573, title: 'Undertale', count: 298 },
+        { id: 3042, title: 'FINAL FANTASY VII', count: 276 },
+        { id: 38844, title: 'DARK SOULS', count: 254 },
+        { id: 298122, title: 'Ghost of Tsushima', count: 231 },
+        { id: 291908, title: 'Hades', count: 218 },
+        { id: 216882, title: 'Hollow Knight', count: 205 },
+        { id: 264025, title: 'Red Dead Redemption 2', count: 193 },
+        { id: 262702, title: 'Celeste', count: 178 },
+        { id: 280711, title: 'SEKIRO: SHADOWS DIE TWICE', count: 167 },
+        { id: 290193, title: 'Disco Elysium', count: 156 },
+        { id: 186516, title: 'Stardew Valley', count: 143 },
+        { id: 15090, title: 'Portal 2', count: 132 },
+        { id: 232472, title: 'モンスターハンター:ワールド', count: 121 },
+        { id: 3022, title: 'METAL GEAR SOLID 3', count: 115 },
+        { id: 3113, title: 'クロノ・トリガー', count: 108 },
+      ],
+      anime: [
+        { id: 265, title: '新世紀エヴァンゲリオン', count: 523 },
+        { id: 74981, title: '進撃の巨人', count: 478 },
+        { id: 1998, title: '鋼の錬金術師 FULLMETAL ALCHEMIST', count: 445 },
+        { id: 9504, title: 'STEINS;GATE', count: 421 },
+        { id: 253, title: 'カウボーイビバップ', count: 398 },
+        { id: 1577, title: 'コードギアス 反逆のルルーシュ', count: 376 },
+        { id: 9717, title: '魔法少女まどか☆マギカ', count: 354 },
+        { id: 33928, title: 'HUNTER×HUNTER', count: 332 },
+        { id: 207195, title: 'ヴァイオレット・エヴァーガーデン', count: 310 },
+        { id: 302286, title: '呪術廻戦', count: 298 },
+        { id: 120776, title: 'ワンパンマン', count: 276 },
+        { id: 329906, title: 'SPY×FAMILY', count: 265 },
+        { id: 340061, title: 'サマータイムレンダ', count: 243 },
+        { id: 162698, title: '僕のヒーローアカデミア', count: 232 },
+        { id: 158906, title: 'モブサイコ100', count: 221 },
+        { id: 400602, title: '葬送のフリーレン', count: 210 },
+        { id: 262972, title: 'かぐや様は告らせたい', count: 198 },
+        { id: 279457, title: '鬼滅の刃', count: 187 },
+        { id: 37685, title: 'PSYCHO-PASS', count: 176 },
+        { id: 266467, title: 'Dr.STONE', count: 165 },
+      ],
+      manga: [
+        { id: 940, title: 'ONE PIECE', count: 534 },
+        { id: 2780, title: 'NARUTO -ナルト-', count: 467 },
+        { id: 1836, title: 'SLAM DUNK', count: 423 },
+        { id: 1468, title: 'ベルセルク', count: 398 },
+        { id: 2550, title: 'HUNTER×HUNTER', count: 376 },
+        { id: 899, title: '進撃の巨人', count: 354 },
+        { id: 1247, title: 'DRAGON BALL', count: 332 },
+        { id: 2058, title: '鋼の錬金術師', count: 310 },
+        { id: 2994, title: 'DEATH NOTE', count: 298 },
+        { id: 283069, title: 'チェンソーマン', count: 276 },
+        { id: 266657, title: '呪術廻戦', count: 254 },
+        { id: 1258, title: 'ジョジョの奇妙な冒険', count: 243 },
+        { id: 5246, title: 'ヴィンランド・サガ', count: 221 },
+        { id: 55891, title: '東京喰種', count: 210 },
+        { id: 295058, title: 'SPY×FAMILY', count: 198 },
+        { id: 1227, title: 'MONSTER', count: 187 },
+        { id: 103632, title: '宝石の国', count: 176 },
+        { id: 1649, title: 'よつばと！', count: 165 },
+        { id: 51529, title: '暗殺教室', count: 154 },
+        { id: 4901, title: 'キングダム', count: 143 },
+      ],
+      music: [
+        { title: 'YOASOBI', count: 312 },
+        { title: '米津玄師', count: 287 },
+        { title: 'Aimer', count: 265 },
+        { title: 'LiSA', count: 243 },
+        { title: 'RADWIMPS', count: 221 },
+        { title: 'King Gnu', count: 210 },
+        { title: 'Official髭男dism', count: 198 },
+        { title: 'Ado', count: 187 },
+        { title: 'Eve', count: 176 },
+        { title: 'Mrs. GREEN APPLE', count: 165 },
+        { title: 'Vaundy', count: 154 },
+        { title: 'ずっと真夜中でいいのに。', count: 143 },
+        { title: 'supercell', count: 132 },
+        { title: '椎名林檎', count: 121 },
+        { title: 'ClariS', count: 115 },
+      ],
+    };
+
+    // Cover cache
+    const coverCache = JSON.parse(localStorage.getItem('my9_cover_cache') || '{}');
+
+    // ===== LANG =====
+    function detectLang() {
+      const urlLang = new URLSearchParams(location.search).get('lang');
+      if (urlLang && I18N[urlLang]) return urlLang;
+      const saved = localStorage.getItem('my9_lang');
+      if (saved && I18N[saved]) return saved;
+      const langs = navigator.languages || [navigator.language || 'en'];
+      for (const l of langs) {
+        if (l.startsWith('ja')) return 'ja';
+        if (l.startsWith('ko')) return 'ko';
+        if (l === 'zh-TW' || l === 'zh-Hant' || l.startsWith('zh-Hant')) return 'zh-TW';
+      }
+      return 'en';
+    }
+
+    let currentLang = detectLang();
+    let currentKind = new URLSearchParams(location.search).get('kind') || 'game';
+
+    function t(key, params) {
+      let s = (I18N[currentLang] && I18N[currentLang][key]) || I18N.en[key] || key;
+      if (params) Object.keys(params).forEach(k => {
+        s = s.replace(new RegExp('\\{' + k + '\\}', 'g'), params[k]);
+      });
+      return s;
+    }
+
+    // ===== LANG SWITCHER =====
+    const LANG_LABELS = { ja: '日本語', ko: '한국어', en: 'EN', 'zh-TW': '繁中' };
+    function renderLangSwitcher() {
+      const el = document.getElementById('langSwitcher');
+      el.innerHTML = Object.keys(LANG_LABELS).map(lang =>
+        `<button class="lang-btn${lang===currentLang?' active':''}" data-lang="${lang}">${LANG_LABELS[lang]}</button>`
+      ).join('');
+      el.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentLang = btn.dataset.lang;
+          localStorage.setItem('my9_lang', currentLang);
+          render();
+        });
+      });
+    }
+
+    // ===== KIND TABS =====
+    function renderKindTabs() {
+      const kinds = ['game', 'anime', 'manga', 'music'];
+      document.getElementById('kindTabs').innerHTML = kinds.map(k =>
+        `<button class="kind-tab${k===currentKind?' active':''}" data-kind="${k}">${t('tab_'+k)}</button>`
+      ).join('');
+      document.querySelectorAll('.kind-tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentKind = btn.dataset.kind;
+          render();
+        });
+      });
+    }
+
+    // ===== DATA MERGE =====
+    function getRankData() {
+      const merged = {};
+      (SEED[currentKind] || []).forEach(item => {
+        const key = item.id ? String(item.id) : item.title;
+        merged[key] = { ...item, cover: item.cover || coverCache[item.id] || '' };
+      });
+
+      // Merge localStorage picks (from user's card generations)
+      try {
+        const picks = JSON.parse(localStorage.getItem('my9_picks') || '{}');
+        const kindPicks = picks[currentKind] || {};
+        Object.entries(kindPicks).forEach(([id, p]) => {
+          if (merged[id]) {
+            merged[id].count += p.count;
+            if (p.cover) merged[id].cover = p.cover;
+          } else if (merged[p.title]) {
+            merged[p.title].count += p.count;
+            if (p.cover) merged[p.title].cover = p.cover;
+          } else {
+            merged[id] = { id: Number(id), title: p.title, cover: p.cover || '', count: p.count };
+          }
+        });
+      } catch(e) {}
+
+      // Date-based growth multiplier
+      const baseDate = new Date('2026-03-01T00:00:00').getTime();
+      const days = Math.max(0, Math.floor((Date.now() - baseDate) / 86400000));
+      const growth = 1 + days * 0.008;
+
+      return Object.values(merged)
+        .map(item => ({ ...item, count: Math.round(item.count * growth) }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 20);
+    }
+
+    // ===== COVER COLORS =====
+    const PALETTE = ['#e85d75','#5d8ce8','#5dcde8','#e8a85d','#8b5de8','#5de88b','#e85da8','#5d75e8','#e85d5d','#5de8d4'];
+    function colorFor(title) { return PALETTE[Math.abs(hashStr(title)) % PALETTE.length]; }
+    function hashStr(s) { let h=0; for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0;} return h; }
+
+    // ===== LAZY COVER FETCH =====
+    const proxyUrl = url => `https://wsrv.nl/?url=${encodeURIComponent(url)}`;
+
+    async function fetchCovers(data) {
+      const toFetch = data.filter(item => item.id && !item.cover);
+      if (!toFetch.length) return;
+
+      // Fetch in batches of 5
+      for (let i = 0; i < toFetch.length; i += 5) {
+        const batch = toFetch.slice(i, i + 5);
+        const results = await Promise.all(batch.map(item =>
+          fetch(`https://api.bgm.tv/subject/${item.id}?responseGroup=small`)
+            .then(r => r.ok ? r.json() : null).catch(() => null)
+        ));
+        results.forEach((res, idx) => {
+          if (res && res.images && res.images.common) {
+            const rawCover = (res.images.common || '').replace('http://', 'https://');
+            const cover = proxyUrl(rawCover);
+            const id = batch[idx].id;
+            coverCache[id] = cover;
+            // Update DOM in-place
+            const container = document.querySelector(`[data-bgm-id="${id}"] .rank-cover`);
+            if (!container) return;
+            let img = container.querySelector('img');
+            if (!img) {
+              img = document.createElement('img');
+              img.loading = 'lazy';
+              img.alt = '';
+              img.style.display = 'block';
+              const init = container.querySelector('.rank-cover-init');
+              img.onerror = () => { img.style.display = 'none'; if (init) init.style.display = 'flex'; };
+              container.insertBefore(img, container.firstChild);
+            }
+            img.src = cover;
+            img.style.display = 'block';
+            const init = container.querySelector('.rank-cover-init');
+            if (init) init.style.display = 'none';
+          }
+        });
+        localStorage.setItem('my9_cover_cache', JSON.stringify(coverCache));
+      }
+    }
+
+    // ===== RENDER =====
+    function render() {
+      document.getElementById('trendTitle').textContent = t('trend_title');
+      document.getElementById('trendSubtitle').textContent = t('trend_subtitle');
+      document.getElementById('backLink').textContent = t('back');
+      document.getElementById('ctaMake').textContent = t('cta');
+
+      renderLangSwitcher();
+      renderKindTabs();
+
+      const data = getRankData();
+      const list = document.getElementById('rankList');
+
+      if (!data.length) {
+        list.innerHTML = `<div class="empty-state">
+          <div class="emoji">📊</div>
+          <p>${t('empty_title')}</p>
+          <p>${t('empty_desc')}</p>
+        </div>`;
+        return;
+      }
+
+      const maxCount = data[0].count;
+      list.innerHTML = data.map((item, i) => {
+        const pct = Math.round((item.count / maxCount) * 100);
+        const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1);
+        const numClass = i < 3 ? ` top-${i+1}` : '';
+        const bgColor = colorFor(item.title);
+        const initial = item.title.charAt(0);
+        const hasCover = !!item.cover;
+        const coverSrc = hasCover && !item.cover.startsWith('https://wsrv')
+          ? proxyUrl(item.cover) : item.cover;
+        const coverHtml = hasCover
+          ? `<img src="${coverSrc}" alt="" loading="lazy" style="display:block" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+            + `<div class="rank-cover-init" style="display:none;background:${bgColor}">${escapeHtml(initial)}</div>`
+          : `<div class="rank-cover-init" style="background:${bgColor}">${escapeHtml(initial)}</div>`;
+
+        return `<div class="rank-item" data-bgm-id="${item.id || ''}">
+          <div class="rank-num${numClass}">${medal}</div>
+          <div class="rank-cover">${coverHtml}</div>
+          <div class="rank-info">
+            <div class="rank-title">${escapeHtml(item.title)}</div>
+            <div class="rank-bar-wrap"><div class="rank-bar" style="width:${pct}%"></div></div>
+            <div class="rank-count">${t('picks', { n: item.count.toLocaleString() })}</div>
+          </div>
+        </div>`;
+      }).join('');
+
+      // Lazy-load covers from Bangumi API
+      fetchCovers(data);
+    }
+
+    function escapeHtml(s) {
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // ===== INIT =====
+    render();
+  </script>
+</body>
+</html>

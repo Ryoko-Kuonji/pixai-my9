@@ -2,14 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://ryoko-kuonji.github.io/pixai-my9/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://ryoko-kuonji.github.io/pixai-my9/?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="ja" href="https://ryoko-kuonji.github.io/pixai-my9/?lang=ja"/>
-    <xhtml:link rel="alternate" hreflang="ko" href="https://ryoko-kuonji.github.io/pixai-my9/?lang=ko"/>
-    <xhtml:link rel="alternate" hreflang="zh-Hant-TW" href="https://ryoko-kuonji.github.io/pixai-my9/?lang=zh-TW"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://ryoko-kuonji.github.io/pixai-my9/"/>
+    <loc>https://pixai.art/tools/my9/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pixai.art/tools/my9/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pixai.art/tools/my9/?lang=ja"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pixai.art/tools/my9/?lang=ko"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant-TW" href="https://pixai.art/tools/my9/?lang=zh-TW"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pixai.art/tools/my9/"/>
     <lastmod>2026-03-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://pixai.art/tools/my9/trends.html</loc>
+    <lastmod>2026-03-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
   </url>
 </urlset>
